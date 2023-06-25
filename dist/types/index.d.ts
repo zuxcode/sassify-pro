@@ -1,2 +1,2 @@
-export { default as sassifypro } from './lib/index.js';
-export { test } from './lib/index.js';
+export { default as Config } from './lib/config/config.js';
+export declare const Hello = "hello";

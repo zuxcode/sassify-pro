@@ -6,13 +6,8 @@ import path from 'path';
 const pathFile = path.resolve(process.cwd(), 'package.json');
 const packageJson = JSON.parse(fs.readFileSync(pathFile, 'utf8'));
 // // Modify the packageJson object as needed
-packageJson.author = {
-  name: 'codeauthor1',
-  email: 'codeauthor2000@gmail.com',
-  url: 'https://www.twitter.com/codeathor1',
-};
-
-// // Write the modified packageJson back to package.json file
+packageJson.version = '1.0.0';
+// Write the modified packageJson back to package.json file
 fs.writeFileSync('./package.json', JSON.stringify(packageJson, null, 2));
 
 console.log('Package.json prepared successfully.');
