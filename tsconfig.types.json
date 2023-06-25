@@ -1,0 +1,9 @@
+{
+	"extends": "./tsconfig.json",
+	"compilerOptions": {
+		 "module": "es2020",
+		"outDir": "./dist/types",
+		"declaration": true,
+		"emitDeclarationOnly": true
+	}
+}

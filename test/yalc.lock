@@ -1,0 +1,9 @@
+{
+  "version": "v1",
+  "packages": {
+    "sassify-pro": {
+      "signature": "d948ec6b1da303921c190dd6cc0148a8",
+      "file": true
+    }
+  }
+}

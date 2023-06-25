@@ -1,0 +1,20 @@
+{
+  "compilerOptions": {
+    "target": "ESNext",
+    "module": "none",
+    "outDir": "dist",
+    "rootDir": "src",
+    "esModuleInterop": true,
+    "resolveJsonModule": true,
+    "moduleResolution":"NodeNext",
+    "forceConsistentCasingInFileNames": true,
+    "resolvePackageJsonExports": true,
+    "resolvePackageJsonImports": true
+  },
+  "include": ["./src/**/*.ts"],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "test"
+  ]
+}
