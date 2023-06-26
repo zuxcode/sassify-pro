@@ -1,3 +1,5 @@
-import {sassifypro,  test} from "sassify-pro";
+import {   Init} from "sassify-pro";
+// const config = new Config()
+const int = new Init()
 
-console.log(sassifypro);
+// const cli = new Cli()

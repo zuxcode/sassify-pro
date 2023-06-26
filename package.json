@@ -1,6 +1,6 @@
 {
   "author": "codeauthor1 <codeauthor2000@gmail.com> (https://www.twitter.com/codeathor1)",
-  "name": "sassify-pro",
+  "name": "sassify-pro-test",
   "version": "1.0.0",
   "description": "SassifyPro is a powerful Sass/SCSS compiler designed to streamline your CSS development process by compiling Sass/SCSS (Syntactically Awesome Style Sheets) into efficient and browser-compatible CSS code. It provides an intuitive command-line interface and a wide range of features to enhance your productivity and maintainability.",
   "main": "dist/mjs/index.js",
@@ -14,8 +14,8 @@
       "default": "./dist/mjs/index.js"
     },
     "./package.json": "./package.json",
-    "./dist/commonjs/index.js": "./dist/commonjs/index.js",
-    "./dist/mjs/index.js": "./dist/mjs/index.js"
+    "./dist/commonjs/*": "./dist/commonjs/*",
+    "./dist/mjs/*": "./dist/mjs/*"
   },
   "bin": {
     " sassifyPro": "dist/mjs/lib/index.js"
@@ -31,7 +31,8 @@
     "lint": "eslint . --ext .js,.ts",
     "lint:fix": "eslint --fix . --ext .js,.ts",
     "format": "prettier --write \"**/*.{js,ts}\"",
-    "precommit": "lint-staged"
+    "precommit": "lint-staged",
+    "dev": "npm run lint:fix && npm run compile:esm && npx yalc publish"
   },
   "husky": {
     "hooks": {
@@ -39,21 +40,30 @@
     }
   },
   "lint-staged": {
-    "*.{ts,tsx}": ["eslint"],
+    "*.{ts,tsx}": [
+      "eslint"
+    ],
     "*.js": "eslint --cache --fix"
-		},
+  },
   "dependencies": {
     "chalk": "^5.2.0",
     "chalk-animation": "^2.0.3",
+    "cli-alerts": "^1.2.2",
+    "cli-handle-error": "^4.4.0",
+    "cli-handle-unhandled": "^1.1.1",
+    "cli-meow-help": "^3.1.0",
     "cli-welcome": "^2.2.2",
     "commander": "^11.0.0",
     "figlet": "^1.6.0",
     "gradient-string": "^2.0.2",
     "inquirer": "^9.2.7",
+    "meow": "^9.0.0",
     "nanospinner": "^1.1.0",
-    "sass": "^1.63.6"
+    "sass": "^1.63.6",
+    "ts-node": "^10.9.1"
   },
   "devDependencies": {
+    "@types/cli-welcome": "^2.2.0",
     "@types/node": "^20.3.1",
     "@typescript-eslint/eslint-plugin": "^5.60.0",
     "@typescript-eslint/parser": "^5.60.0",
