@@ -109,7 +109,7 @@ class CompileSass {
           const subdir = fs.readdirSync(childStackPath);
           subDirectory.push(...subdir);
           pathName = childStackPath;
-        } else if (fullPath.match(/.s[ac]ss$/)) {
+        } else if (childStackPath.match(/.s[ac]ss$/)) {
           this.fileDependency.push(childStackPath);
         }
       }
@@ -143,31 +143,42 @@ class CompileSass {
     console.log('Checking if out path exist');
 
     this.fileDependency.forEach((file) => {
-      sass.compile(file, {
-        alertAscii: true,
-        alertColor: true,
-        charset: true,
-        quietDeps: this.sassifyProJson.quietDeps,
-        sourceMap: this.sassifyProJson.sourceMap,
-        sourceMapIncludeSources: this.sassifyProJson.sourceMapIncludeSources,
-        style: this.sassifyProJson.style,
-      });
+      sass
+        .compileAsync(file, {
+          alertAscii: true,
+          alertColor: true,
+          charset: true,
+          quietDeps: this.sassifyProJson.quietDeps,
+          sourceMap: this.sassifyProJson.sourceMap,
+          sourceMapIncludeSources: this.sassifyProJson.sourceMapIncludeSources,
+          style: this.sassifyProJson.style,
+        })
+        .then((result) => {
+          result.loadedUrls.forEach((url) => {
+            /**
+             * @description check if output part exist,
+             * if path is not found, create path
+             */
+            if (!fs.existsSync(outputPath)) {
+              console.log('Create Output Path');
+              fs.mkdirSync(outputPath, { recursive: true });
+              console.log('override file');
+
+              const fileName = path.basename(url.pathname);
+              console.log('Writing File');
+              const renameFile = fileName.replace(/.s[ac]ss$/, '.css');
+
+              fs.writeFileSync(path.join(outputPath, renameFile), result.css);
+            } else {
+              const fileName = path.basename(url.pathname);
+              console.log('Writing File');
+              const renameFile = fileName.replace(/.s[ac]ss$/, '.css');
+
+              fs.writeFileSync(path.join(outputPath, renameFile), result.css);
+            }
+          });
+        });
     });
-
-    /**
-     * @description check if output part exist,
-     * if path is not found, create path
-     */
-    if (fs.existsSync(outputPath)) {
-      console.log('Create Output Path');
-      fs.mkdirSync(outputPath, { recursive: true });
-      console.log('override file');
-
-      const exet = outputPath.replace(/.s[ac]ss$/, '.css');
-      console.log('Writing File');
-
-      fs.writeFileSync(`${outputPath}${exet}`, 'utf8');
-    }
   }
 }
 export default CompileSass;
