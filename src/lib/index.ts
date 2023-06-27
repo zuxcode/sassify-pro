@@ -11,8 +11,7 @@
  */
 
 import meow from 'meow';
-import { Init, Cli } from './utils/index.js';
-// import { Init, Cli, DebugLogger } from './utils/index.js';
+import { Init, Cli, DebugLogger } from './utils/index.js';
 
 class SassifyPro {
   private result: meow.Result<any>;
@@ -44,15 +43,15 @@ class SassifyPro {
       this.cli.run().showHelp(0);
     }
 
-    // if (this.flags.debug) {
-    //   this.debuggerLogger.log(this.flags);
-    // }
+    if (this.flags.debug) {
+      DebugLogger.log(this.flags);
+    }
   }
 }
 
-(async () => {
-  const app = new SassifyPro();
-  await app.run();
-})();
+// (async () => {
+//   const app = new SassifyPro();
+//   await app.run();
+// })();
 
 export default SassifyPro;

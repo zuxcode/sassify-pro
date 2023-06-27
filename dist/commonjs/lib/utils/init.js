@@ -6,6 +6,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const cli_welcome_1 = __importDefault(require("cli-welcome"));
 const cli_handle_unhandled_1 = __importDefault(require("cli-handle-unhandled"));
 const config_js_1 = __importDefault(require("../config/config.js"));
+/**
+ * @class Intit
+ * @extends Config
+ */
 class Init extends config_js_1.default {
     clear;
     constructor(clear = true) {
@@ -14,8 +18,8 @@ class Init extends config_js_1.default {
     }
     initialize() {
         (0, cli_welcome_1.default)({
-            title: this.name,
-            tagLine: `by ${this.author}`,
+            title: this.packageName,
+            tagLine: `by ${this.authorName}`,
             description: this.description,
             version: this.version,
             bgColor: '#36BB09',

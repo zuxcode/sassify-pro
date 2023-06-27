@@ -2,6 +2,10 @@ import welcome from 'cli-welcome';
 import unhandled from 'cli-handle-unhandled';
 import Config from '../config/config.js';
 
+/**
+ * @class Intit
+ * @extends Config
+ */
 class Init extends Config {
   private clear: boolean;
 
@@ -12,8 +16,8 @@ class Init extends Config {
 
   public initialize(): void {
     welcome({
-      title: this.name,
-      tagLine: `by ${this.author}`,
+      title: this.packageName,
+      tagLine: `by ${this.authorName}`,
       description: this.description,
       version: this.version,
       bgColor: '#36BB09',

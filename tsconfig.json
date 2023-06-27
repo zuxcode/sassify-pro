@@ -5,7 +5,7 @@
     "outDir": "dist",
     "rootDir": "src",
     "esModuleInterop": true,
-    "resolveJsonModule": true,
+    // "resolveJsonModule": true,
     "moduleResolution": "NodeNext",
     "forceConsistentCasingInFileNames": true,
     "resolvePackageJsonExports": true,

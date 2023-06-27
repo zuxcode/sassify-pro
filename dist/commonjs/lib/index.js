@@ -11,7 +11,6 @@
  */
 Object.defineProperty(exports, "__esModule", { value: true });
 const index_js_1 = require("./utils/index.js");
-// import { Init, Cli, DebugLogger } from './utils/index.js';
 class SassifyPro {
     result;
     flags;
@@ -33,13 +32,13 @@ class SassifyPro {
         if (this.result.input.includes('help')) {
             this.cli.run().showHelp(0);
         }
-        // if (this.flags.debug) {
-        //   this.debuggerLogger.log(this.flags);
-        // }
+        if (this.flags.debug) {
+            index_js_1.DebugLogger.log(this.flags);
+        }
     }
 }
-(async () => {
-    const app = new SassifyPro();
-    await app.run();
-})();
+// (async () => {
+//   const app = new SassifyPro();
+//   await app.run();
+// })();
 exports.default = SassifyPro;

@@ -1,25 +1,22 @@
-#!/usr/bin/env node
+#!/usr/bin/env node;
+/**
+ * @author codeAuthor1
+ * @package sassify-pro
+ * @version 1.0.0
+ * @class Config
+ * @protected packageJsonSnapshot. it holds a snapshot of the package.json file.
+ * @constructor `this.packageJsonSnapshot.version: string`.
+ * stores the current version of sassify-pro
+ * @classdesc configuration File.
+ */
 declare class Config {
-    private packageName;
-    private globalPath;
-    private localPath;
-    private packagePath;
-    protected name: string;
-    protected version: string;
-    protected description: string;
-    protected author: string;
-    protected packageJson: {
-        author: {
-            name: 'CodeAuthor1';
-            email: 'codeauthor2000@gmail.com';
-            url: 'https://www.twitter.com/codeauthor1';
-        };
-        name: string;
-        version: string;
-        description: string;
-    };
+    readonly authorName: string;
+    readonly authorEmail: string;
+    readonly authorUrl: string;
+    readonly packageName: string;
+    readonly version: string;
+    readonly description: string;
+    compiler: void;
     constructor();
-    packageJsonSnapshot(): void;
-    readPackageJson(): void;
 }
 export default Config;

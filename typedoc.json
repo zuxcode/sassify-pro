@@ -1,0 +1,7 @@
+{
+  "entryPoints": ["src/lib/index.ts"],
+  "out": "docs/ts",
+  "name": "My TypeScript Documentation",
+  "exclude": ["**/*.spec.ts"],
+  "theme": "default"
+}
