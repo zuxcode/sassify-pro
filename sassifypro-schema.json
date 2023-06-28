@@ -37,9 +37,15 @@
       "description": "An array of paths to exclude from processing."
     },
     "style": {
-      "type": "string",
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "string"
+      },
       "enum": ["compressed", "expanded", "minified"],
-      "description": "A List containing the desired style(s) for the output CSS."
+      "minItems": 0,
+      "maxItems": 3,
+      "description": "An array containing the desired style(s) for the output CSS."
     },
     "autoprefixer": {
       "type": "boolean",
