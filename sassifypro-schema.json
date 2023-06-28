@@ -1,5 +1,5 @@
 {
-  "$schema": "https://github.com/Codeauthor1/sassify-pro/blob/dev/sassifypro-schema.json",
+  "$schema": "https://raw.githubusercontent.com/Codeauthor1/sassify-pro/dev/sassifypro-schema.json",
   "type": "object",
   "properties": {
     "sourceDir": {
@@ -38,7 +38,6 @@
     },
     "style": {
       "type": "array",
-      "items": { "type": "string" },
       "uniqueItems": true,
       "enum": ["compressed", "expanded", "minified"],
       "minItems": 0,
