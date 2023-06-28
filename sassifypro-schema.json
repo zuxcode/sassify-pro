@@ -1,0 +1,65 @@
+{
+  "$schema": "https://getcomposer.org/schema.json",
+  "type": "object",
+  "properties": {
+    "sourceDir": {
+      "type": "string",
+      "description": "The path to the source directory."
+    },
+    "outputDir": {
+      "type": "string",
+      "description": "The path to the output directory."
+    },
+    "watch": {
+      "type": "boolean",
+      "description": "Flag indicating whether to watch for file changes."
+    },
+    "sourceMap": {
+      "type": "boolean",
+      "description": "Flag indicating whether to generate source maps."
+    },
+    "importPaths": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "uniqueItems": true,
+      "minItems": 0,
+      "description": "Specifies an array of filenames or patterns to include in the program. These filenames are resolved relative to the directory containing the sassifypro.json file."
+    },
+    "excludePaths": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "uniqueItems": true,
+      "minItems": 0,
+      "description": "An array of paths to exclude from processing."
+    },
+    "style": {
+      "type": "array",
+      "items": { "type": "string" },
+      "uniqueItems": true,
+      "enum": ["compressed", "expanded", "minified"],
+      "minItems": 0,
+      "maxItems": 3,
+      "description": "An array containing the desired style(s) for the output CSS."
+    },
+    "autoprefixer": {
+      "type": "boolean",
+      "description": "Flag indicating whether to enable autoprefixer."
+    },
+    "verbose": {
+      "type": "boolean",
+      "description": "Flag indicating the verbosity of console output for deprecation warnings. By default, SassifyPro limits the number of instances of the same deprecation warning printed to five per compilation. Setting 'verbose' to true overrides this behavior and prints every encountered deprecation warning."
+    },
+    "quietDeps": {
+      "type": "boolean",
+      "description": "Flag indicating whether to suppress dependency-related console output."
+    },
+    "sourceMapIncludeSources": {
+      "type": "boolean",
+      "description": "Flag indicating whether to include the original sources in the generated source map."
+    }
+  }
+}
