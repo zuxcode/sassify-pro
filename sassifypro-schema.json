@@ -38,9 +38,12 @@
     },
     "style": {
       "type": "array",
-      "items": {
-        "type": "string"
-      },
+      "prefixItems": [
+        { "type": "string" },
+        { "enum": ["compressed", "expanded", "minified"] },
+        { "minItems": 0 },
+        { "maxItems": 3 }
+      ],
       "description": "An array containing the desired style(s) for the output CSS."
     },
     "autoprefixer": {

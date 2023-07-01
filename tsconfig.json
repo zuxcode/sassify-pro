@@ -3,13 +3,14 @@
     "target": "ESNext",
     "module": "none",
     "outDir": "dist",
-    "rootDir": "src",
+    "rootDir": "./lib",
     "esModuleInterop": true,
     // "resolveJsonModule": true,
-    "moduleResolution": "NodeNext",
+    "moduleResolution": "nodenext",
     "forceConsistentCasingInFileNames": true,
     "resolvePackageJsonExports": true,
-    "resolvePackageJsonImports": true
+    "resolvePackageJsonImports": true,
+    "baseUrl": "./"
   },
-  "exclude": ["node_modules", "dist", "test"]
+  "exclude": ["node_modules", "dist", "test", "docs", "src"]
 }

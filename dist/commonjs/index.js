@@ -1,14 +1,50 @@
+#!/usr/bin/env node
 "use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
+/**
+ * @package SassifyPro
+ *
+ *  SassifyPro is a powerful Sass/SCSS compiler designed to streamline your CSS
+ * development process by compiling Sass/SCSS (Syntactically Awesome Style Sheets) into efficient
+ * and browser-compatible CSS code. It provides an intuitive command-line interface and a wide
+ * range of features to enhance your productivity and maintainability.
+ *
+ * @author codeauthor1 <codeauthor2000@gmail.com> (https://www.twitter.com/codeathor1)
+ *
+ */
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = exports.Cli = exports.Init = exports.Config = void 0;
-var config_js_1 = require("./lib/config/config.js");
-Object.defineProperty(exports, "Config", { enumerable: true, get: function () { return __importDefault(config_js_1).default; } });
-var init_js_1 = require("./lib/utils/init.js");
-Object.defineProperty(exports, "Init", { enumerable: true, get: function () { return __importDefault(init_js_1).default; } });
-var cli_js_1 = require("./lib/utils/cli.js");
-Object.defineProperty(exports, "Cli", { enumerable: true, get: function () { return __importDefault(cli_js_1).default; } });
-var index_js_1 = require("./lib/index.js");
-Object.defineProperty(exports, "default", { enumerable: true, get: function () { return __importDefault(index_js_1).default; } });
+const index_js_1 = require("./utils/index.js");
+class SassifyPro {
+    result;
+    flags;
+    // private flags: meow.TypedFlags<'help' | 'clear' | 'debug', any> &
+    //   Record<'help' | 'clear' | 'debug', any>;
+    cli = new index_js_1.Cli();
+    init = new index_js_1.Init();
+    // private debuggerLogger = new DebugLogger();
+    clear;
+    debug;
+    constructor() {
+        this.result = this.cli.run();
+        this.flags = this.result.flags;
+        this.clear = this.flags.clear;
+        this.debug = this.flags.debug;
+    }
+    async run() {
+        this.init.initialize();
+        if (this.result.input.includes('help')) {
+            this.cli.run().showHelp(0);
+        }
+        if (this.flags.debug) {
+            index_js_1.DebugLogger.log(this.flags);
+        }
+    }
+}
+// (async () => {
+//   const app = new SassifyPro();
+//   await app.run();
+// })();
+// export { default as Config } from './lib/config/meta-detail.js';
+// export { default as Init } from './lib/utils/init.js';
+// export { default as Cli } from './lib/utils/cli.js';
+// export { default } from './lib/index.js';
+exports.default = SassifyPro;

@@ -1,7 +1,7 @@
 {
-  "entryPoints": ["src/lib/index.ts"],
-  "out": "docs/ts",
-  "name": "My TypeScript Documentation",
+  "entryPoints": ["./lib/**/*"],
+  "out": "docs/",
+  "name": "SassifyPro",
   "exclude": ["**/*.spec.ts"],
   "theme": "default"
 }
