@@ -11,7 +11,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "sassify-pro-test": "file:.yalc/sassify-pro-test"
+    "sassify-pro": "file:.yalc/sassify-pro"
   },
   "devDependencies": {
     "jest": "^29.5.0",

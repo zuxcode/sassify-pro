@@ -1,34 +1,27 @@
-/**
- * Represents an excluded file.
- * @module
- */
-class ExcludeFile {
-    /**
-     * Excludes a file from a list of excluded files based on matching patterns.
-     *
-     * @param {string[]} excludedFile - The array of excluded file paths.
-     * @param {string} src - The file path to be checked for exclusion.
-     *
-     * @returns {string[]} The updated array of file paths after excluding the specified file.
-     */
-    static excludeFile(excludedFile, src) {
+export default class ExcludeFile {
+    static excludeFile(excludedFile, sourcePath) {
         const fileDependency = [];
         const isEmptyPath = excludedFile.length === 0;
         if (isEmptyPath)
-            fileDependency.push(src);
+            fileDependency.push(sourcePath);
         else {
             const matchWhiteSpaceEmptyString = /^$|\s+/;
             const isInvalidPath = (path) => matchWhiteSpaceEmptyString.test(path);
             excludedFile.forEach((file) => {
                 if (isInvalidPath(file)) {
-                    fileDependency.push(src);
+                    console.log(`${file}Empty path`);
+                    fileDependency.push(sourcePath);
                 }
-                else if (!file.match(src)) {
-                    fileDependency.push(src);
+                else {
+                    if (!file.match(sourcePath)) {
+                        fileDependency.push(sourcePath);
+                    }
+                    if (file.match(sourcePath)) {
+                        console.log('Excluding file from compilation');
+                    }
                 }
             });
         }
         return fileDependency;
     }
 }
-export default ExcludeFile;

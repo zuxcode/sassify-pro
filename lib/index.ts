@@ -12,43 +12,99 @@
  *
  */
 
-import meow from 'meow';
-import { Init, Cli, DebugLogger } from './utils/index.js';
+import { createSpinner } from 'nanospinner';
+import chalk from 'chalk';
 
-class SassifyPro {
-  private result: meow.Result<any>;
+import { version, message } from './cli/initialize.js';
+import { compileSass } from './module/compiler.js';
+import { watchSass } from './utils/watch.js';
 
-  private flags: any;
-  // private flags: meow.TypedFlags<'help' | 'clear' | 'debug', any> &
-  //   Record<'help' | 'clear' | 'debug', any>;
+type options =
+  | 'compile'
+  | 'c'
+  | '--version'
+  | '-v'
+  | 'watch'
+  | 'w'
+  | '--source-map'
+  | '-m'
+  | '--import-path'
+  | '-p'
+  | '--style'
+  | '-s'
+  | '--autoprefixer'
+  | '-a';
 
-  private cli = new Cli();
-
-  private init = new Init();
-
-  // private debuggerLogger = new DebugLogger();
-
-  private clear: string;
-
-  private debug: string;
-
-  constructor() {
-    this.result = this.cli.run();
-    this.flags = this.result.flags;
-    this.clear = this.flags.clear;
-    this.debug = this.flags.debug;
+export default class SassifyPro {
+  private static InvalidSrcPath() {
+    createSpinner().error({
+      text: chalk.red(
+        'Error: The "path" argument must be of type string. Received undefined',
+      ),
+    });
   }
 
-  async run(): Promise<void> {
-    this.init.initialize();
-    if (this.result.input.includes('help')) {
-      this.cli.run().showHelp(0);
-    }
+  private static parser(flag?: options, index?: number, argv?: string[]) {
+    switch (flag) {
+      case '--version':
+        version();
+        break;
 
-    if (this.flags.debug) {
-      DebugLogger.log(this.flags);
+      case '-v':
+        version();
+        break;
+
+      case 'compile':
+        if (!argv[index + 1]) {
+          SassifyPro.InvalidSrcPath();
+          return;
+        }
+
+        compileSass({
+          sourceFile: argv[index + 1],
+          outputDirectory: argv[index + 2],
+        });
+        break;
+
+      case 'c':
+        if (!argv[index + 1]) {
+          SassifyPro.InvalidSrcPath();
+          return;
+        }
+
+        compileSass({
+          sourceFile: argv[index + 1],
+          outputDirectory: argv[index + 2],
+        });
+        break;
+
+      case 'watch':
+        watchSass(argv[index + 1], argv[index + 2]);
+        break;
+
+      case 'w':
+        watchSass(argv[index + 1], argv[index + 2]);
+        break;
+
+      default:
+        if (flag.match(/-+/)) {
+          createSpinner().error({
+            text: chalk.red(`bad option: ${flag}`),
+          });
+          break;
+        }
+    }
+  }
+
+  public static run() {
+    if (process.argv.length <= 2) {
+      message();
+    } else {
+      const sliceArg = process.argv.slice(2);
+
+      sliceArg.find(SassifyPro.parser);
     }
   }
 }
 
-export default SassifyPro;
+export const { run } = SassifyPro;

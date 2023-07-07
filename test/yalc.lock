@@ -2,7 +2,7 @@
   "version": "v1",
   "packages": {
     "sassify-pro": {
-      "signature": "b6a0ccccb57b6ce02d27fdfa3e27f34a",
+      "signature": "dd7bc669ccacde08a3ecb910646c44ab",
       "file": true
     },
     "sassify-pro-test": {

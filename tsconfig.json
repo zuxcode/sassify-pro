@@ -1,16 +1,15 @@
 {
   "compilerOptions": {
     "target": "ESNext",
-    "module": "none",
+    "module": "nodenext",
     "outDir": "dist",
     "rootDir": "./lib",
     "esModuleInterop": true,
-    // "resolveJsonModule": true,
     "moduleResolution": "nodenext",
     "forceConsistentCasingInFileNames": true,
     "resolvePackageJsonExports": true,
     "resolvePackageJsonImports": true,
-    "baseUrl": "./"
+    "removeComments": true
   },
   "exclude": ["node_modules", "dist", "test", "docs", "src"]
 }

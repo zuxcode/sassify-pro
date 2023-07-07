@@ -1,26 +1,11 @@
 import * as fs from 'node:fs';
 import path from 'node:path';
-import CompilerConfig from './config-compiler.js';
-import DefaultCompilerConfig, {
-  ConfigInterface,
-} from '../abstract/abstract-config.js';
+// import SetCompilerConfiguration from './set-compiler-configuration.js';
+import { getConfig } from '../abstract/abstract-config.js';
 
-/**
- * Represents the interface that extends the `DefaultCompilerConfig`
- * and includes additional properties for searching a configuration
- * file and retrieving the user configuration.
- */
-interface SearchFileInterface extends DefaultCompilerConfig {
-  /**
-   * The path to the configuration file.
-   */
-  configPath: string;
+import { ConfigInterface } from '../abstract/abstract-type.js';
 
-  /**
-   * Regular expression to match white space or empty string.
-   */
-  matchWhiteSpaceEmptyString: RegExp;
-
+class ReadConfigFile {
   /**
    * Retrieves the configuration from the 'sassifypro.json'
    * file or returns the default configuration.
@@ -31,50 +16,7 @@ interface SearchFileInterface extends DefaultCompilerConfig {
    * while reading or parsing the file, it returns the default configuration.
    */
 
-  getConfig(): ConfigInterface | null;
-}
-
-/**
- * Represents a class that reads a configuration file and
- * implements the `SearchFileInterface`.
- * @extends CompilerConfig
- * @implements SearchFileInterface
- */
-
-class ReadConfigFile extends CompilerConfig implements SearchFileInterface {
-  /**
-   * The path to the configuration file.
-   */
-  configPath: string;
-
-  /**
-   * Regular expression to match white space or empty string.
-   */
-  matchWhiteSpaceEmptyString: RegExp;
-
-  /**
-   * Creates an instance of `ReadConfigFile` class.
-   */
-
-  constructor() {
-    super();
-
-    this.matchWhiteSpaceEmptyString = /^$|\s+/;
-
-    this.userConfig = {};
-  }
-
-  /**
-   * Retrieves the configuration from the 'sassifypro.json'
-   * file or returns the default configuration.
-   *
-   * @returns {ConfigInterface} The configuration object retrieved
-   * from the 'sassifypro.json' file if it exists and contains valid
-   *  JSON data. If the file is not found, empty, or there is an error
-   * while reading or parsing the file, it returns the default configuration.
-   */
-
-  getConfig(): ConfigInterface {
+  public static getConfig(): ConfigInterface {
     console.log('Fetching configuration  file');
 
     const configPath = path.join(process.cwd(), 'sassifypro.json');
@@ -82,40 +24,42 @@ class ReadConfigFile extends CompilerConfig implements SearchFileInterface {
     const isConfigExist = fs.existsSync(configPath);
 
     if (!isConfigExist) {
-      return this.config;
-    }
-
-    const isExist = fs.existsSync(this.configPath);
-
-    if (!isExist) {
       console.log(
         'Invalid path: Configuration file does not exit. Loading default configuration',
       );
-      return this.config;
+      return getConfig();
     }
 
-    const configStat = fs.statSync(this.configPath);
+    const configStat = fs.statSync(configPath);
 
-    const CheckConfigFileSize = configStat.size === 0;
+    const isInvalidConfigFileSize = configStat.size === 0;
 
-    if (CheckConfigFileSize) {
+    if (isInvalidConfigFileSize) {
       console.log('Loading default configuration');
-      return this.config;
+      return getConfig();
     }
 
     try {
-      const ReadUserConfig = fs.readFileSync(this.configPath, 'utf-8');
+      const ReadUserConfigurationFile = fs.readFileSync(configPath, 'utf-8');
 
-      const parseUserConfig = JSON.parse(ReadUserConfig);
+      const parseUserConfig: ConfigInterface = JSON.parse(
+        ReadUserConfigurationFile,
+      );
 
-      if (parseUserConfig) {
-        this.config = parseUserConfig;
-        return this.config;
+      if (!parseUserConfig) {
+        throw new Error('Parse Error: cannot parse json file');
       }
+
+      // if (parseUserConfig) {
+      //   CompilerConfig.config = SetCompilerConfiguration.setCompilerConfiguration(
+      //     parseUserConfig,
+      //     CompilerConfig.config,
+      //   );
+      // }
     } catch (error) {
-      console.log('Loading Configuration');
+      console.log(`${error.message} Loading Configuration`);
     }
-    return this.config;
+    return getConfig();
   }
 }
 

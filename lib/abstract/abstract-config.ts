@@ -1,79 +1,16 @@
 /**
  * Configuration options for a SassifyPro compiler.
  */
-
-export interface ConfigInterface {
-  /**
-   * The source directory for the task.
-   */
-  sourceDir?: string;
-
-  /**
-   * The output directory for the task.
-   */
-  outputDir?: string;
-
-  /**
-   * Indicates whether the task should watch for changes.
-   */
-  watch?: boolean;
-
-  /**
-   * Determines whether source maps should be generated.
-   */
-  sourceMap?: boolean;
-
-  /**
-   * Additional paths to search for imported files or dependencies.
-   */
-  importPaths?: string[];
-
-  /**
-   * Paths to exclude from the task.
-   */
-  excludePaths?: string[];
-
-  /**
-   * Indicates whether the output should be minified.
-   */
-  minified?: boolean;
-
-  /**
-   * The style format for CSS.
-   * - `compressed`: CSS should be compressed.
-   * - `expanded`: CSS should be expanded.
-   */
-  style?: 'compressed' | 'expanded';
-
-  /**
-   * Determines whether dependency-related messages should be suppressed.
-   */
-  quietDeps?: boolean;
-
-  /**
-   * Specifies whether the source map should include the original sources.
-   */
-  sourceMapIncludeSources?: boolean;
-
-  /**
-   * Indicates whether autoprefixer should be enabled for CSS.
-   */
-  autoprefixer?: boolean;
-
-  /**
-   * Determines the verbosity of the task.
-   */
-  verbose?: boolean;
-}
+import { ConfigInterface } from './abstract-type.js';
 
 /**
  * Represents the default configuration for a compiler.
  */
-abstract class DefaultCompilerConfig {
+export default abstract class CompilerConfig {
   /**
    * The configuration options for the compiler.
    */
-  public config: ConfigInterface = {
+  private static config: ConfigInterface = {
     /**
      * Determines whether autoprefixer should be enabled for CSS.
      * Autoprefixer automatically adds vendor prefixes to CSS properties
@@ -99,7 +36,7 @@ abstract class DefaultCompilerConfig {
      * Possible values: 'compressed' or 'expanded'
      * Default: 'expanded'
      */
-    style: 'expanded',
+    style: ['expanded', 'compressed'],
 
     /**
      * Determines whether source maps should be generated during the compilation.
@@ -108,12 +45,6 @@ abstract class DefaultCompilerConfig {
      * Default: true
      */
     sourceMap: true,
-
-    /**
-     * Determines whether the compiled output should be minified.
-     * Default: true
-     */
-    minified: true,
 
     /**
      * Indicates whether the compiler should watch for file changes and recompile automatically.
@@ -126,7 +57,7 @@ abstract class DefaultCompilerConfig {
      * Files or directories matching these paths will be ignored during the compilation.
      * Default: []
      */
-    excludePaths: [],
+    excludePaths: /\/node_modules\/*\//,
 
     /**
      * Specifies an array of additional paths to search for imported files or dependencies.
@@ -154,6 +85,15 @@ abstract class DefaultCompilerConfig {
      */
     verbose: false,
   };
+
+  // eslint-disable-next-line no-unused-vars
+  public static setConfig(props: (config: ConfigInterface) => ConfigInterface) {
+    CompilerConfig.config = props(CompilerConfig.config);
+  }
+
+  public static getConfig() {
+    return CompilerConfig.config;
+  }
 }
 
-export default DefaultCompilerConfig;
+export const { getConfig, setConfig } = CompilerConfig;
