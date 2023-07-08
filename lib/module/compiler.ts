@@ -15,7 +15,7 @@ interface CompilerInterFace {
 export default class Compiler {
   private static preCompile(props: CompilerInterFace) {
     const {
-      sourceFile,
+      sourceFile = props.sourceFile ?? '.',
       outputDirectory = props.outputDirectory ?? 'public',
       style = props.style ?? 'expanded',
       sourceMap = true,

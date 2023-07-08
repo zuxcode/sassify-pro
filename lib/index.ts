@@ -18,6 +18,7 @@ import chalk from 'chalk';
 import { version, message } from './cli/initialize.js';
 import { compileSass } from './module/compiler.js';
 import { watchSass } from './utils/watch.js';
+import { importPath } from './utils/import-path.js';
 
 type options =
   | 'compile'
@@ -27,9 +28,9 @@ type options =
   | 'watch'
   | 'w'
   | '--source-map'
-  | '-m'
+  | '-S'
   | '--import-path'
-  | '-p'
+  | '-i'
   | '--style'
   | '-s'
   | '--autoprefixer'
@@ -45,6 +46,11 @@ export default class SassifyPro {
   }
 
   private static parser(flag?: options, index?: number, argv?: string[]) {
+    const compileSrc = argv[index + 1];
+    const compileOutput = argv[index + 2];
+    const importPathOutput = argv[argv.length - 1];
+    const importPathSrc = argv.slice(3, argv.length - 1);
+
     switch (flag) {
       case '--version':
         version();
@@ -55,39 +61,61 @@ export default class SassifyPro {
         break;
 
       case 'compile':
-        if (!argv[index + 1]) {
-          SassifyPro.InvalidSrcPath();
-          return;
-        }
+        if (compileSrc.match(/^-+/)) return;
 
         compileSass({
-          sourceFile: argv[index + 1],
-          outputDirectory: argv[index + 2],
+          sourceFile: compileSrc,
+          outputDirectory: compileOutput,
         });
         break;
 
       case 'c':
-        if (!argv[index + 1]) {
-          SassifyPro.InvalidSrcPath();
-          return;
-        }
+        if (compileSrc.match(/^-+/)) return;
 
         compileSass({
-          sourceFile: argv[index + 1],
-          outputDirectory: argv[index + 2],
+          sourceFile: compileSrc,
+          outputDirectory: compileOutput,
         });
         break;
 
       case 'watch':
-        watchSass(argv[index + 1], argv[index + 2]);
+        if (compileSrc.match(/^-+/)) return;
+
+        watchSass(compileSrc, compileOutput);
         break;
 
       case 'w':
-        watchSass(argv[index + 1], argv[index + 2]);
+        if (compileSrc.match(/^-+/)) return;
+
+        watchSass(compileSrc, compileOutput);
+        break;
+
+      case '--import-path':
+        if (!importPathSrc) {
+          SassifyPro.InvalidSrcPath();
+        }
+
+        if (importPathSrc.length === 0) {
+          SassifyPro.InvalidSrcPath();
+        }
+
+        importPath(compileSrc, importPathOutput, ...importPathSrc);
+        break;
+
+      case '-i':
+        if (!importPathSrc) {
+          SassifyPro.InvalidSrcPath();
+        }
+
+        if (importPathSrc.length === 0) {
+          SassifyPro.InvalidSrcPath();
+        }
+
+        importPath(compileSrc, importPathOutput, ...importPathSrc);
         break;
 
       default:
-        if (flag.match(/-+/)) {
+        if (flag.match(/^-+/)) {
           createSpinner().error({
             text: chalk.red(`bad option: ${flag}`),
           });
