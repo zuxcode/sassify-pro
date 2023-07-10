@@ -1,4 +1,4 @@
-export type TypeStyle = 'compressed' | 'expanded' | 'minified';
+export type TypeStyle = 'compressed' | 'expanded';
 
 export interface ConfigInterface {
   /**
@@ -36,7 +36,7 @@ export interface ConfigInterface {
    * - `compressed`: CSS should be compressed.
    * - `expanded`: CSS should be expanded.
    */
-  style?: TypeStyle[];
+  style?: TypeStyle;
 
   /**
    * Determines whether dependency-related messages should be suppressed.

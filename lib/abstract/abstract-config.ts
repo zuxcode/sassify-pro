@@ -1,7 +1,7 @@
 /**
  * Configuration options for a SassifyPro compiler.
  */
-import { ConfigInterface } from './abstract-type.js';
+import { ConfigInterface } from '../types/abstract-type.js';
 
 /**
  * Represents the default configuration for a compiler.
@@ -29,14 +29,14 @@ export default abstract class CompilerConfig {
      * Specifies the source directory for the compiler.
      * Default: 'src'
      */
-    sourceDir: 'src',
+    sourceDir: process.cwd(),
 
     /**
      * Specifies the style format for CSS.
      * Possible values: 'compressed' or 'expanded'
      * Default: 'expanded'
      */
-    style: ['expanded', 'compressed'],
+    style: 'expanded',
 
     /**
      * Determines whether source maps should be generated during the compilation.

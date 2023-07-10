@@ -43,12 +43,10 @@ export default class MatchFilePath {
             return;
           }
           if (data.length > 0) {
-            setTimeout(() => {
-              fileDependency.push(data);
-              spinner.success({
-                text: `${chalk.green('Loading')} ${file}`,
-              });
-            }, 1000);
+            fileDependency.push(data);
+            spinner.success({
+              text: `${chalk.green('Loading')} ${file}`,
+            });
           }
         });
       });

@@ -1,3 +1,3 @@
-import Init, {run} from "sassify-pro";
+import  {run} from "sassifypro";
  run()
 

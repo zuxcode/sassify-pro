@@ -1,0 +1,18 @@
+# Directory
+
+lib/
+test/
+docs/
+.vscode/
+.husky/
+scripts/
+node_modules/
+
+
+jsdoc.conf
+.es*
+.git*
+.prettier*
+jest*
+tsconfig*
+typedoc.json

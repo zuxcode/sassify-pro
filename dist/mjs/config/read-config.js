@@ -1,32 +1,38 @@
 import * as fs from 'node:fs';
 import path from 'node:path';
-import { getConfig } from '../abstract/abstract-config.js';
+import chalk from 'chalk';
+import { createSpinner } from 'nanospinner';
+import { getConfig, setConfig } from '../abstract/abstract-config.js';
 class ReadConfigFile {
-    static getConfig() {
-        console.log('Fetching configuration  file');
+    static readConfig() {
         const configPath = path.join(process.cwd(), 'sassifypro.json');
-        const isConfigExist = fs.existsSync(configPath);
-        if (!isConfigExist) {
-            console.log('Invalid path: Configuration file does not exit. Loading default configuration');
+        const isConfigPathExist = fs.existsSync(configPath);
+        if (!isConfigPathExist)
             return getConfig();
-        }
-        const configStat = fs.statSync(configPath);
-        const isInvalidConfigFileSize = configStat.size === 0;
-        if (isInvalidConfigFileSize) {
-            console.log('Loading default configuration');
+        const configFileStat = fs.statSync(configPath);
+        const isValidConfigFileSize = configFileStat.size !== 0;
+        if (!isValidConfigFileSize)
             return getConfig();
-        }
         try {
             const ReadUserConfigurationFile = fs.readFileSync(configPath, 'utf-8');
-            const parseUserConfig = JSON.parse(ReadUserConfigurationFile);
-            if (!parseUserConfig) {
-                throw new Error('Parse Error: cannot parse json file');
-            }
+            const parseUserConfigFile = JSON.parse(ReadUserConfigurationFile);
+            if (!parseUserConfigFile)
+                throw new Error('File to parse JSON file: Invalid Json format.');
+            Object.keys(parseUserConfigFile).forEach((configKey) => {
+                Object.keys(getConfig()).forEach((defaultConfigKey) => {
+                    if (configKey.match(defaultConfigKey)) {
+                        setConfig(() => (getConfig()[defaultConfigKey] = parseUserConfigFile[configKey]));
+                    }
+                });
+            });
+            return getConfig();
         }
         catch (error) {
-            console.log(`${error.message} Loading Configuration`);
+            createSpinner().error({
+                text: `${chalk.red(error.message)}} ${chalk.green('Falling back to default configuration')}`,
+            });
+            return getConfig();
         }
-        return getConfig();
     }
 }
 export default ReadConfigFile;

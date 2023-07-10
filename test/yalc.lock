@@ -2,11 +2,15 @@
   "version": "v1",
   "packages": {
     "sassify-pro": {
-      "signature": "287f38678f26901e71686624e18c450c",
+      "signature": "3e5bb01f1a6be4e0f2df7534a9f8626a",
       "file": true
     },
     "sassify-pro-test": {
       "signature": "5f5e8ba34ec7642e29c380ef6e9da894",
+      "file": true
+    },
+    "sassifypro": {
+      "signature": "43d8161a2401f04848f8ffbb9a4ecaa2",
       "file": true
     }
   }

@@ -14,3 +14,4 @@ export default class PackageJson {
         return pkg;
     }
 }
+export const { readPkg } = PackageJson;

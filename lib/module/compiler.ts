@@ -4,6 +4,9 @@ import path from 'node:path';
 import chalk from 'chalk';
 import { createSpinner } from 'nanospinner';
 
+import { matchFile } from './match-file.js';
+import { readConfig } from '../config/read-config.js';
+
 interface CompilerInterFace {
   sourceFile: string;
   outputDirectory: string;
@@ -14,12 +17,14 @@ interface CompilerInterFace {
 
 export default class Compiler {
   private static preCompile(props: CompilerInterFace) {
+    const config = readConfig();
+
     const {
-      sourceFile = props.sourceFile ?? '.',
-      outputDirectory = props.outputDirectory ?? 'public',
-      style = props.style ?? 'expanded',
-      sourceMap = true,
-      quietDeps = true,
+      sourceFile = props.sourceFile ?? config.sourceDir,
+      outputDirectory = props.outputDirectory ?? config.outputDir,
+      style = props.style ?? config.style,
+      sourceMap = props.sourceMap ?? config.sourceMap,
+      quietDeps = props.quietDeps ?? config.quietDeps,
     } = props;
 
     const spinner = createSpinner().start({
@@ -54,11 +59,9 @@ export default class Compiler {
             )} ${outputDirectory}`,
           });
         }
-        setTimeout(() => {
-          spinner.success({
-            text: `${chalk.green('Writing ')} ${sourceFile}`,
-          });
-        }, 1000);
+        spinner.success({
+          text: `${chalk.green('Writing ')} ${sourceFile}`,
+        });
         fs.writeFileSync(joinFilePath, compileResult.css);
       });
     })();
@@ -66,48 +69,48 @@ export default class Compiler {
 
   public static compileSass(props: CompilerInterFace) {
     const {
-      sourceFile,
-      outputDirectory = props.outputDirectory ?? 'public',
-      style = props.style ?? 'expanded',
-      sourceMap = true,
-      quietDeps = true,
+      sourceFile, outputDirectory, style, sourceMap, quietDeps,
     } = props;
 
     const spinner = createSpinner();
 
-    const searchWhiteSpaceEmptyString = /^$|\s+/;
-
-    const isValidPath = (filePath: string): boolean => !searchWhiteSpaceEmptyString.test(filePath);
-
     try {
-      const resolvePath = path.resolve(process.cwd(), sourceFile);
-      const isValidSourceFile = isValidPath(sourceFile);
-      const isExist = fs.existsSync(sourceFile);
-
-      if (!sourceFile) throw new Error(`Error: Cannot find file ${resolvePath}`);
-
-      if (!isValidSourceFile) throw new Error(`Error: Cannot find file ${resolvePath}`);
+      const srcPath = sourceFile ?? '';
+      const resolvePath = path.join(process.cwd(), srcPath);
+      const isExist = fs.existsSync(resolvePath);
 
       if (!isExist) throw new Error(`Error: Cannot find file ${resolvePath}`);
 
-      const sourceFileStat = fs.statSync(sourceFile);
+      const sourceFileStat = fs.statSync(resolvePath);
 
-      if (sourceFileStat.isDirectory()) throw new Error(`Error: Cannot find file ${resolvePath}`);
+      let sassFiles: string[];
 
-      if (sourceFileStat.size === 0) {
-        setTimeout(() => {
-          spinner.warn({
-            text: `${chalk.yellow('Compiling an empty file: ')} ${resolvePath}`,
-          });
-        }, 1000);
+      if (sourceFileStat.isDirectory()) {
+        sassFiles = [...matchFile(resolvePath)];
       }
 
-      Compiler.preCompile({
-        sourceFile,
-        outputDirectory,
-        style,
-        sourceMap,
-        quietDeps,
+      if (sourceFileStat.isFile()) {
+        sassFiles = [...resolvePath];
+      }
+
+      sassFiles.forEach((sassFile) => {
+        const sassFileStat = fs.statSync(resolvePath);
+
+        if (sassFileStat.size === 0) {
+          spinner.warn({
+            text: `${chalk.yellow(
+              'Compiling an empty sass file: ',
+            )} ${resolvePath}`,
+          });
+        }
+
+        Compiler.preCompile({
+          sourceFile: sassFile,
+          outputDirectory,
+          style,
+          sourceMap,
+          quietDeps,
+        });
       });
     } catch (error) {
       spinner.error({

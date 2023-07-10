@@ -5,13 +5,13 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "start": "npx yalc add sassify-pro && node ./src/mjs/index.js"
+    "start": "npx yalc add sassify-pro; node ./src/mjs/index.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "sassify-pro": "file:.yalc/sassify-pro"
+    "sassifypro": "file:.yalc/sassifypro"
   },
   "devDependencies": {
     "jest": "^29.5.0",
