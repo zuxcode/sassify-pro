@@ -1,0 +1,7 @@
+{
+  "entryPoints": ["./lib/**/*"],
+  "out": "docs/",
+  "name": "SassifyPro",
+  "exclude": ["**/*.spec.ts"],
+  "theme": "default"
+}

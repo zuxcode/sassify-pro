@@ -1,20 +1,15 @@
 {
   "compilerOptions": {
     "target": "ESNext",
-    "module": "none",
+    "module": "nodenext",
     "outDir": "dist",
-    "rootDir": "src",
+    "rootDir": "./lib",
     "esModuleInterop": true,
-    "resolveJsonModule": true,
-    "moduleResolution":"NodeNext",
+    "moduleResolution": "nodenext",
     "forceConsistentCasingInFileNames": true,
     "resolvePackageJsonExports": true,
-    "resolvePackageJsonImports": true
+    "resolvePackageJsonImports": true,
+    "removeComments": true
   },
-  "include": ["./src/**/*.ts"],
-  "exclude": [
-    "node_modules",
-    "dist",
-    "test"
-  ]
+  "exclude": ["node_modules", "dist", "test", "docs", "src"]
 }
