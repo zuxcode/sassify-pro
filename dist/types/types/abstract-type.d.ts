@@ -1,4 +1,4 @@
-export type TypeStyle = 'compressed' | 'expanded' | 'minified';
+export type TypeStyle = 'compressed' | 'expanded';
 export interface ConfigInterface {
     sourceDir?: string;
     outputDir?: string;
@@ -6,7 +6,7 @@ export interface ConfigInterface {
     sourceMap?: boolean;
     importPaths?: string[];
     excludePaths?: RegExp;
-    style?: TypeStyle[];
+    style?: TypeStyle;
     quietDeps?: boolean;
     sourceMapIncludeSources?: boolean;
     autoprefixer?: boolean;

@@ -1,5 +1,5 @@
 import { ConfigInterface } from '../types/abstract-type.js';
-declare class ReadConfigFile {
+export default class ReadConfigFile {
     static readConfig(): ConfigInterface;
 }
-export default ReadConfigFile;
+export declare const readConfig: typeof ReadConfigFile.readConfig;

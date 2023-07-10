@@ -3,7 +3,7 @@ import path from 'node:path';
 import chalk from 'chalk';
 import { createSpinner } from 'nanospinner';
 import { getConfig, setConfig } from '../abstract/abstract-config.js';
-class ReadConfigFile {
+export default class ReadConfigFile {
     static readConfig() {
         const configPath = path.join(process.cwd(), 'sassifypro.json');
         const isConfigPathExist = fs.existsSync(configPath);
@@ -35,4 +35,4 @@ class ReadConfigFile {
         }
     }
 }
-export default ReadConfigFile;
+export const { readConfig } = ReadConfigFile;

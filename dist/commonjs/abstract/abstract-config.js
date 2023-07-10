@@ -2,8 +2,8 @@ export default class CompilerConfig {
     static config = {
         autoprefixer: true,
         outputDir: 'public',
-        sourceDir: 'src',
-        style: ['expanded', 'compressed'],
+        sourceDir: process.cwd(),
+        style: 'expanded',
         sourceMap: true,
         watch: false,
         excludePaths: /\/node_modules\/*\//,

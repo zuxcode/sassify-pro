@@ -87,15 +87,12 @@ export default class Compiler {
 
       if (sourceFileStat.isDirectory()) {
         sassFiles = [...matchFile(resolvePath)];
+        console.log(sassFiles);
       }
 
       if (sourceFileStat.isFile()) {
-        sassFiles = [...resolvePath];
-      }
-
-      sassFiles.forEach((sassFile) => {
         const sassFileStat = fs.statSync(resolvePath);
-
+        sassFiles = [...resolvePath];
         if (sassFileStat.size === 0) {
           spinner.warn({
             text: `${chalk.yellow(
@@ -103,7 +100,9 @@ export default class Compiler {
             )} ${resolvePath}`,
           });
         }
+      }
 
+      sassFiles.forEach((sassFile) => {
         Compiler.preCompile({
           sourceFile: sassFile,
           outputDirectory,
