@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import { createSpinner } from 'nanospinner';
 import chalk from 'chalk';
-import { version, message } from '../cli/initialize.js';
+import { version, message, sassifyproInit } from '../cli/initialize.js';
 import { compileSass } from './compiler.js';
 import { watchSass } from '../utils/watch.js';
 import { importPath } from '../utils/import-path.js';
@@ -85,6 +85,9 @@ export default class SassifyPro {
                     SassifyPro.InvalidSrcPath();
                 }
                 importPath(compileSrc, importPathOutput, ...importPathSrc);
+                break;
+            case '--init':
+                sassifyproInit();
                 break;
             default:
                 if (flag.match(/^-+/)) {

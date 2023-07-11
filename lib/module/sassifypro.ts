@@ -15,7 +15,7 @@
 import { createSpinner } from 'nanospinner';
 import chalk from 'chalk';
 
-import { version, message } from '../cli/initialize.js';
+import { version, message, sassifyproInit } from '../cli/initialize.js';
 import { compileSass } from './compiler.js';
 import { watchSass } from '../utils/watch.js';
 import { importPath } from '../utils/import-path.js';
@@ -34,7 +34,8 @@ type options =
   | '--style'
   | '-s'
   | '--autoprefixer'
-  | '-a';
+  | '-a'
+  | '--init';
 
 export default class SassifyPro {
   private static InvalidSrcPath() {
@@ -138,6 +139,9 @@ export default class SassifyPro {
         importPath(compileSrc, importPathOutput, ...importPathSrc);
         break;
 
+      case '--init':
+        sassifyproInit();
+        break;
       default:
         if (flag.match(/^-+/)) {
           createSpinner().error({

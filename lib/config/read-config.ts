@@ -1,9 +1,8 @@
+/* eslint-disable no-unused-vars */
 import * as fs from 'node:fs';
 import path from 'node:path';
-import chalk from 'chalk';
-import { createSpinner } from 'nanospinner';
 
-import { getConfig, setConfig } from '../abstract/abstract-config.js';
+import { getConfig } from '../cli/abstract-config.js';
 
 import { ConfigInterface } from '../types/abstract-type.js';
 
@@ -18,49 +17,43 @@ export default class ReadConfigFile {
    * while reading or parsing the file, it returns the default configuration.
    */
 
-  public static readConfig(): ConfigInterface {
-    const configPath = path.join(process.cwd(), 'sassifypro.json');
+  public static async readConfig(
+    cb: (err: Error, data: ConfigInterface) => void,
+  ): Promise<void> {
+    return new Promise((resolve, reject) => {
+      const configPath = path.join(process.cwd(), 'sassifypro.json');
 
-    const isConfigPathExist = fs.existsSync(configPath);
+      const isConfigPathExist = fs.existsSync(configPath);
 
-    if (!isConfigPathExist) return getConfig();
+      if (!isConfigPathExist) resolve(getConfig());
 
-    const configFileStat = fs.statSync(configPath);
+      const configFileStat = fs.statSync(configPath);
 
-    const isValidConfigFileSize = configFileStat.size !== 0;
+      const isValidConfigFileSize = configFileStat.size !== 0;
 
-    if (!isValidConfigFileSize) return getConfig();
+      if (!isValidConfigFileSize) resolve(getConfig());
 
-    try {
-      const ReadUserConfigurationFile = fs.readFileSync(configPath, 'utf-8');
+      fs.readFile(configPath, 'utf-8', (error, data) => {
+        if (error) reject(error);
 
-      const parseUserConfigFile: ConfigInterface = JSON.parse(
-        ReadUserConfigurationFile,
-      );
+        const parseUserConfigFile: ConfigInterface = JSON.parse(data);
 
-      if (!parseUserConfigFile) throw new Error('File to parse JSON file: Invalid Json format.');
+        if (!parseUserConfigFile) reject(error);
 
-      Object.keys(parseUserConfigFile).forEach((configKey) => {
-        Object.keys(getConfig()).forEach((defaultConfigKey) => {
-          if (configKey.match(defaultConfigKey)) {
-            setConfig(
-              // eslint-disable-next-line no-return-assign
-              () => (getConfig()[defaultConfigKey] = parseUserConfigFile[configKey]),
-            );
-          }
+        resolve(parseUserConfigFile);
+      });
+    })
+      .then((config: ConfigInterface) => {
+        Object.keys(config).forEach((configKey) => {
+          Object.keys(getConfig()).forEach((defaultConfigKey) => {
+            if (configKey.match(defaultConfigKey)) {
+              config = { ...getConfig(), ...config };
+            }
+          });
         });
-      });
-
-      return getConfig();
-    } catch (error) {
-      createSpinner().error({
-        text: `${chalk.red(error.message)}} ${chalk.green(
-          'Falling back to default configuration',
-        )}`,
-      });
-
-      return getConfig();
-    }
+        cb(null, config);
+      })
+      .catch((error) => cb(error, null));
   }
 }
 

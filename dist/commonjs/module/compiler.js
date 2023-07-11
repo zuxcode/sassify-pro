@@ -6,43 +6,42 @@ import { createSpinner } from 'nanospinner';
 import { matchFile } from './match-file.js';
 import { readConfig } from '../config/read-config.js';
 export default class Compiler {
-    static preCompile(props) {
-        const config = readConfig();
-        const { sourceFile = props.sourceFile ?? config.sourceDir, outputDirectory = props.outputDirectory ?? config.outputDir, style = props.style ?? config.style, sourceMap = props.sourceMap ?? config.sourceMap, quietDeps = props.quietDeps ?? config.quietDeps, } = props;
-        const spinner = createSpinner().start({
-            color: 'green',
-            text: 'Starting Compilation\n',
-        });
-        (async () => {
-            const compileResult = await sass.compileAsync(sourceFile, {
+    static async preCompile(props) {
+        const spinner = createSpinner();
+        readConfig((err, data) => {
+            if (err)
+                console.log(err);
+            const { sourceFile = props.sourceFile ?? data.sourceDir, style = props.style ?? data.style, sourceMp = props.sourceMp ?? data.sourceMap, quietDeps = props.quietDeps ?? data.quietDeps, outputDirectory = props.outputDirectory ?? data.outputDir, } = props;
+            sass
+                .compileAsync(sourceFile, {
                 alertAscii: true,
                 alertColor: true,
                 charset: true,
                 quietDeps,
-                sourceMap,
+                sourceMap: sourceMp,
                 style,
-            });
-            const { loadedUrls } = compileResult;
-            const isOutDirExist = fs.existsSync(outputDirectory);
-            loadedUrls.forEach((url) => {
-                const fileName = path.basename(url.pathname);
-                const renameFile = fileName.replace(/.s[ac]ss$/, '.css');
-                const joinFilePath = path.join(outputDirectory, renameFile);
-                if (!isOutDirExist) {
+            })
+                .then(({ css, loadedUrls, sourceMap }) => {
+                const isExist = fs.existsSync(outputDirectory);
+                if (!isExist) {
                     fs.mkdirSync(outputDirectory, { recursive: true });
-                    spinner.success({
-                        text: `${chalk.green('Directory created successfully: ')} ${outputDirectory}`,
-                    });
                 }
-                spinner.success({
-                    text: `${chalk.green('Writing ')} ${sourceFile}`,
+                loadedUrls.forEach((url) => {
+                    const fileName = path.basename(url.pathname);
+                    const renameFile = fileName.replace(/.s[ac]ss$/, '.css');
+                    const joinFilePath = path.join(outputDirectory, renameFile);
+                    fs.writeFileSync(joinFilePath, css);
                 });
-                fs.writeFileSync(joinFilePath, compileResult.css);
+                console.log(sourceMap);
             });
-        })();
+        });
+        spinner.success({
+            text: `${chalk.green('File compiled successfully')}`,
+        });
     }
-    static compileSass(props) {
-        const { sourceFile, outputDirectory, style, sourceMap, quietDeps, } = props;
+    static async compileSass(props) {
+        const { sourceFile, outputDirectory, style, sourceMp, quietDeps, } = props;
+        const { preCompile } = Compiler;
         const spinner = createSpinner();
         try {
             const srcPath = sourceFile ?? '';
@@ -51,27 +50,26 @@ export default class Compiler {
             if (!isExist)
                 throw new Error(`Error: Cannot find file ${resolvePath}`);
             const sourceFileStat = fs.statSync(resolvePath);
-            let sassFiles;
-            if (sourceFileStat.isDirectory()) {
-                sassFiles = [...matchFile(resolvePath)];
-                console.log(sassFiles);
-            }
             if (sourceFileStat.isFile()) {
-                const sassFileStat = fs.statSync(resolvePath);
-                sassFiles = [...resolvePath];
-                if (sassFileStat.size === 0) {
-                    spinner.warn({
-                        text: `${chalk.yellow('Compiling an empty sass file: ')} ${resolvePath}`,
-                    });
-                }
-            }
-            sassFiles.forEach((sassFile) => {
-                Compiler.preCompile({
-                    sourceFile: sassFile,
+                preCompile({
+                    sourceFile: resolvePath,
                     outputDirectory,
                     style,
-                    sourceMap,
+                    sourceMp,
                     quietDeps,
+                });
+            }
+            matchFile(resolvePath, (err, files) => {
+                if (err)
+                    console.log(err);
+                files.forEach((file) => {
+                    preCompile({
+                        sourceFile: file,
+                        outputDirectory,
+                        style,
+                        sourceMp,
+                        quietDeps,
+                    });
                 });
             });
         }
@@ -79,6 +77,7 @@ export default class Compiler {
             spinner.error({
                 text: `${chalk.red(error.message)}`,
             });
+            console.log(error);
         }
     }
 }

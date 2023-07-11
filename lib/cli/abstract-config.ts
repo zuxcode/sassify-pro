@@ -1,6 +1,7 @@
 /**
  * Configuration options for a SassifyPro compiler.
  */
+import path from 'node:path';
 import { ConfigInterface } from '../types/abstract-type.js';
 
 /**
@@ -29,7 +30,7 @@ export default abstract class CompilerConfig {
      * Specifies the source directory for the compiler.
      * Default: 'src'
      */
-    sourceDir: process.cwd(),
+    sourceDir: path.basename(process.cwd()),
 
     /**
      * Specifies the style format for CSS.
@@ -86,14 +87,9 @@ export default abstract class CompilerConfig {
     verbose: false,
   };
 
-  // eslint-disable-next-line no-unused-vars
-  public static setConfig(props: (config: ConfigInterface) => ConfigInterface) {
-    CompilerConfig.config = props(CompilerConfig.config);
-  }
-
   public static getConfig() {
     return CompilerConfig.config;
   }
 }
 
-export const { getConfig, setConfig } = CompilerConfig;
+export const { getConfig } = CompilerConfig;

@@ -1,8 +1,9 @@
+import path from 'node:path';
 export default class CompilerConfig {
     static config = {
         autoprefixer: true,
         outputDir: 'public',
-        sourceDir: process.cwd(),
+        sourceDir: path.basename(process.cwd()),
         style: 'expanded',
         sourceMap: true,
         watch: false,
@@ -12,11 +13,8 @@ export default class CompilerConfig {
         sourceMapIncludeSources: false,
         verbose: false,
     };
-    static setConfig(props) {
-        CompilerConfig.config = props(CompilerConfig.config);
-    }
     static getConfig() {
         return CompilerConfig.config;
     }
 }
-export const { getConfig, setConfig } = CompilerConfig;
+export const { getConfig } = CompilerConfig;
