@@ -6,7 +6,7 @@ import { createSpinner } from 'nanospinner';
 import { compileSass } from '../module/compiler.js';
 
 export default class WatchMode {
-  public static watchSass(sourceDirectory: string, outputDirectory: string) {
+  public static watchSass(sourceDirectory: string, outputDir: string) {
     const browser = browserSync.create('Sassifypro server');
 
     const spinner = createSpinner();
@@ -23,12 +23,12 @@ export default class WatchMode {
     spinner.success({ text: chalk.green('Watch mode') });
 
     watcher.on('ready', () => {
-      compileSass({ sourceFile: sourceDirectory, outputDirectory });
+      compileSass({ sourceDir: sourceDirectory, outputDir });
       spinner.success({ text: chalk.green('Compiled successfully \n') });
 
       browser.init({
         server: {
-          baseDir: outputDirectory ?? 'public',
+          baseDir: outputDir ?? 'public',
           serveStaticOptions: {
             extensions: ['html'],
           },
@@ -46,7 +46,7 @@ export default class WatchMode {
 
     watcher.on('all', (event, path) => {
       function compileAndReload(file: string, output: string) {
-        compileSass({ sourceFile: file, outputDirectory: output });
+        compileSass({ sourceDir: file, outputDir: output });
         spinner.success({
           text: chalk.green(
             `File ${path} has been modified. Reloading the browser...`,
@@ -63,7 +63,7 @@ export default class WatchMode {
               `File ${path} has been modified. Recompiling File\n`,
             ),
           });
-          compileAndReload(path, outputDirectory);
+          compileAndReload(path, outputDir);
 
           break;
 
@@ -85,7 +85,7 @@ export default class WatchMode {
               `File ${path} has been removed. Recompiling File`,
             ),
           });
-          compileAndReload(sourceDirectory, outputDirectory);
+          compileAndReload(sourceDirectory, outputDir);
 
           break;
 
@@ -93,7 +93,7 @@ export default class WatchMode {
           spinner.success({
             text: chalk.yellow(`Directory ${path} has been removed`),
           });
-          compileAndReload(sourceDirectory, outputDirectory);
+          compileAndReload(sourceDirectory, outputDir);
 
           break;
 

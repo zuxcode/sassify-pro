@@ -1,13 +1,6 @@
-interface CompilerInterFace {
-    sourceFile: string;
-    outputDirectory: string;
-    style?: 'compressed' | 'expanded';
-    sourceMp?: boolean;
-    quietDeps?: boolean;
-}
+import { SassOptions } from '../@types/sass-options.js';
 export default class Compiler {
     private static preCompile;
-    static compileSass(props: CompilerInterFace): Promise<void>;
+    static compileSass(props: SassOptions): Promise<void>;
 }
 export declare const compileSass: typeof Compiler.compileSass;
-export {};

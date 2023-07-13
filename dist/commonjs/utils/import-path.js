@@ -4,7 +4,7 @@ export default class ImportPath {
     static importPath(rootPath, outputPath, ...arg) {
         arg.forEach((file) => {
             const jointFilePath = path.join(rootPath, file);
-            compileSass({ sourceFile: jointFilePath, outputDirectory: outputPath });
+            compileSass({ sourceDir: jointFilePath, outputDir: outputPath });
         });
     }
 }

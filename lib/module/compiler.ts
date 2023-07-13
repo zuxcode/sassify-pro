@@ -6,105 +6,107 @@ import { createSpinner } from 'nanospinner';
 
 import { matchFile } from './match-file.js';
 import { readConfig } from '../config/read-config.js';
-
-interface CompilerInterFace {
-  sourceFile: string;
-  outputDirectory: string;
-  style?: 'compressed' | 'expanded';
-  sourceMp?: boolean;
-  quietDeps?: boolean;
-}
+import { SassOptions } from '../@types/sass-options.js';
+import { getConfig } from '../cli/sass-options.js';
 
 export default class Compiler {
-  private static async preCompile(props: CompilerInterFace) {
+  private static async preCompile(props: SassOptions) {
     const spinner = createSpinner();
+
     readConfig((err, data) => {
-      if (err) console.log(err);
+      if (err) {
+        spinner.error({ text: chalk.red(err.message) });
+        console.log('---------------------------------');
+        console.log(err);
+      }
 
-      const {
-        sourceFile = props.sourceFile ?? data.sourceDir,
-        style = props.style ?? data.style,
-        sourceMp = props.sourceMp ?? data.sourceMap,
-        quietDeps = props.quietDeps ?? data.quietDeps,
-        outputDirectory = props.outputDirectory ?? data.outputDir,
-      } = props;
-
+      for(let key in props){
+        if(typeof props[key] === 'undefined'){
+            delete props[key]
+        }
+    }
+    const sassOptions = { ...data, ...props  };
       sass
-        .compileAsync(sourceFile, {
-          alertAscii: true,
-          alertColor: true,
-          charset: true,
-          quietDeps,
-          sourceMap: sourceMp,
-          style,
-        })
-        .then(({ css, loadedUrls, sourceMap }) => {
-          const isExist = fs.existsSync(outputDirectory);
+        .compileAsync(sassOptions.sourceDir, sassOptions)
+        .then(({ css, loadedUrls }) => {
+          const isExist = fs.existsSync(sassOptions.outputDir);
 
           if (!isExist) {
-            fs.mkdirSync(outputDirectory, { recursive: true });
+            fs.mkdirSync(sassOptions.outputDir, { recursive: true });
           }
           loadedUrls.forEach((url) => {
             const fileName = path.basename(url.pathname);
-            const renameFile = fileName.replace(/.s[ac]ss$/, '.css');
-            const joinFilePath = path.join(outputDirectory, renameFile);
-            fs.writeFileSync(joinFilePath, css);
+
+            if (!fileName.match(/^_/)) {
+              const renameFile = fileName.replace(/.s[ac]ss$/, '.css');
+
+              const joinFilePath = path.join(sassOptions.outputDir, renameFile);
+
+              fs.writeFileSync(joinFilePath, css);
+            }
           });
-          console.log(sourceMap);
         });
-    });
-    spinner.success({
-      text: `${chalk.green('File compiled successfully')}`,
+    }).catch((err) => {
+      spinner.error({ text: chalk.red(err) });
     });
   }
 
-  public static async compileSass(props: CompilerInterFace) {
+  public static async compileSass(props: SassOptions) {
     const {
-      sourceFile, outputDirectory, style, sourceMp, quietDeps,
+      sourceDir, outputDir, style, sourceMap, quietDeps,
     } = props;
 
     const { preCompile } = Compiler;
 
     const spinner = createSpinner();
+    const srcPath = sourceDir ?? '';
+    const resolvePath = path.join(process.cwd(), srcPath);
+    const isExist = fs.existsSync(resolvePath);
 
     try {
-      const srcPath = sourceFile ?? '';
-      const resolvePath = path.join(process.cwd(), srcPath);
-      const isExist = fs.existsSync(resolvePath);
-
-      if (!isExist) throw new Error(`Error: Cannot find file ${resolvePath}`);
+      if (!isExist) throw new Error(` Cannot find file in ${resolvePath} directory`);
 
       const sourceFileStat = fs.statSync(resolvePath);
 
       if (sourceFileStat.isFile()) {
         preCompile({
-          sourceFile: resolvePath,
-          outputDirectory,
+          sourceDir: resolvePath,
+          outputDir,
           style,
-          sourceMp,
+          sourceMap,
           quietDeps,
+        }).then(() => {
+          spinner.success({
+            text: `${chalk.green('File compiled successfully')}`,
+          });
         });
       }
 
       matchFile(resolvePath, (err, files) => {
-        if (err) console.log(err);
+        if (err) {
+          spinner.error({ text: chalk.red(err.message) });
+          console.log(err);
+        }
 
         files.forEach((file) => {
           preCompile({
-            sourceFile: file,
-            outputDirectory,
+            sourceDir: file,
+            outputDir,
             style,
-            sourceMp,
+            sourceMap,
             quietDeps,
+          }).then(() => {
+            spinner.success({
+              text: `${chalk.green('File compiled successfully')}`,
+            });
           });
         });
       });
     } catch (error) {
-      spinner.error({
-        text: `${chalk.red(error.message)}`,
-      });
-
       console.log(error);
+      spinner.error({
+        text: `${chalk.red(error)}`,
+      });
     }
   }
 }

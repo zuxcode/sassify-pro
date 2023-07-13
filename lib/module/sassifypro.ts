@@ -64,8 +64,8 @@ export default class SassifyPro {
       case 'compile':
         if (!compileSrc) {
           compileSass({
-            sourceFile: compileSrc,
-            outputDirectory: compileOutput,
+            sourceDir: compileSrc,
+            outputDir: compileOutput,
           });
 
           return;
@@ -74,8 +74,8 @@ export default class SassifyPro {
         if (compileSrc.match(/^-+/)) return;
 
         compileSass({
-          sourceFile: compileSrc,
-          outputDirectory: compileOutput,
+          sourceDir: compileSrc,
+          outputDir: compileOutput,
         });
         break;
 
@@ -88,8 +88,8 @@ export default class SassifyPro {
         if (compileSrc.match(/^-+/)) return;
 
         compileSass({
-          sourceFile: compileSrc,
-          outputDirectory: compileOutput,
+          sourceDir: compileSrc,
+          outputDir: compileOutput,
         });
         break;
 

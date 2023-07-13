@@ -5,8 +5,10 @@ SassifyPro is a powerful Sass/SCSS compiler designed to streamline your CSS deve
 ## Badges
 
 [![MIT License](https://img.shields.io/badge/License-MIT-green.svg)](https://choosealicense.com/licenses/mit/)
-[![GPLv3 License](https://img.shields.io/badge/License-GPL%20v3-yellow.svg)](https://opensource.org/licenses/)
-[![AGPL License](https://img.shields.io/badge/license-AGPL-blue.svg)](http://www.gnu.org/licenses/agpl-3.0)
+[![pages-build-deployment](https://github.com/Codeauthor1/sassifypro/actions/workflows/pages/pages-build-deployment/badge.svg)](https://github.com/Codeauthor1/sassifypro/actions/workflows/pages/pages-build-deployment)
+[![Build](https://github.com/Codeauthor1/sassifypro/actions/workflows/node.js.yml/badge.svg)](https://github.com/Codeauthor1/sassifypro/actions/workflows/node.js.yml)
+[![Build](https://github.com/Codeauthor1/sassifypro/actions/workflows/node-test.js.yml/badge.svg)](https://github.com/Codeauthor1/sassifypro/actions/workflows/node-test.js.yml)
+
 
 ## Installation
 

@@ -1,6 +1,6 @@
 import * as fs from 'node:fs';
 import path from 'node:path';
-import { getConfig } from '../cli/abstract-config.js';
+import { getConfig, setConfig } from '../cli/sass-options.js';
 export default class ReadConfigFile {
     static async readConfig(cb) {
         return new Promise((resolve, reject) => {
@@ -22,13 +22,7 @@ export default class ReadConfigFile {
             });
         })
             .then((config) => {
-            Object.keys(config).forEach((configKey) => {
-                Object.keys(getConfig()).forEach((defaultConfigKey) => {
-                    if (configKey.match(defaultConfigKey)) {
-                        config = { ...getConfig(), ...config };
-                    }
-                });
-            });
+            setConfig(config);
             cb(null, config);
         })
             .catch((error) => cb(error, null));

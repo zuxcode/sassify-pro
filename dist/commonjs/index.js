@@ -8,4 +8,4 @@ export { watchSass } from './utils/watch.js';
 export { readPkg } from './utils/pkg.js';
 export { readConfig } from './config/read-config.js';
 export { message, version, sassifyproInit } from './cli/initialize.js';
-export { getConfig } from './cli/abstract-config.js';
+export { getConfig } from './cli/sass-options.js';

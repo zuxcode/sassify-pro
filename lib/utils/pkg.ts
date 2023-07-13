@@ -2,7 +2,7 @@ import { fileURLToPath } from 'node:url';
 import path, { dirname } from 'node:path';
 
 import { readFileSync } from 'node:fs';
-import { pkgInterface } from '../types/pkg.js';
+import { pkgInterface } from '../@types/pkg.js';
 
 export default class PackageJson {
   public static readPkg() {
