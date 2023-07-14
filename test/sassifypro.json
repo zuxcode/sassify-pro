@@ -2,11 +2,8 @@
   "autoprefixer": true,
   "outputDir": "public",
   "sourceDir": "test",
-  "style": "compressed",
-  "sourceMap": true,
+  "style": "expanded",
   "watch": false,
-  "excludePaths": [],
-  "importPaths": [],
-  "quietDeps": false,
-  "sourceMapIncludeSources": false
+  "excludePaths": {},
+  "importPaths": []
 }

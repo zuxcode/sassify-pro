@@ -14,6 +14,8 @@ export default abstract class SassConfig {
     watch: false,
     excludePaths: /\/node_modules\/*\//,
     importPaths: [],
+    quietDeps: false,
+    sourceMapIncludeSources: false,
   };
 
   /**
