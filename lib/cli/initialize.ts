@@ -1,5 +1,6 @@
 import figlet from 'figlet';
 import chalk from 'chalk';
+import { promises as fsPromises } from 'node:fs';
 import { writeFile } from 'fs/promises';
 import { join } from 'node:path';
 import { createSpinner } from 'nanospinner';
@@ -63,9 +64,18 @@ export default class Initialize {
 
       await writeFile(configPath, stringifySassifyProConfig, 'utf8');
 
-      spinner.success({
-        text: chalk.green('sassifypro.json has been updated successfully.'),
-      });
+      await fsPromises
+        .access(configPath)
+        .then(() => {
+          spinner.success({
+            text: chalk.green('sassifypro.json updated successfully.'),
+          });
+        })
+        .catch(() => {
+          spinner.success({
+            text: chalk.green('sassifypro.json created successfully.'),
+          });
+        });
     } catch (parseError: unknown) {
       spinner.error({
         text: chalk.red('Error parsing existing sassifypro.json:'),
