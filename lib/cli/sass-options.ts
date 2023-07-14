@@ -2,12 +2,10 @@ import path from 'node:path';
 import { SassOptions } from '../@types/sass-options.js';
 
 /**
- * Abstract class representing Sass configuration.
+ * Provides configuration management for Sass.
+ * @see {@link SassOptions}
  */
 export default abstract class SassConfig {
-  /**
-   * Default Sass configuration.
-   */
   private static config: SassOptions = {
     autoprefixer: true,
     outputDir: 'public',
@@ -19,27 +17,27 @@ export default abstract class SassConfig {
   };
 
   /**
-   * Get the current Sass configuration.
+   * Gets the current Sass configuration.
    * @returns The current Sass configuration.
+   * @see {@link SassOptions} for the Sass configuration options.
    */
   public static getConfig(): SassOptions {
     return SassConfig.config;
   }
 
   /**
-   * Set the Sass configuration.
-   * @param config - The new Sass configuration to set.
+   * Sets the Sass configuration.
+   * @param config - The Sass configuration to set.
+   * @see {@link SassOptions} for the Sass configuration options.
    */
   public static setConfig(config: SassOptions): void {
-    SassConfig.config = { ...SassConfig.getConfig(), ...config };
-    Object.keys(config).forEach((configKey) => {
-      Object.keys(SassConfig.getConfig()).forEach((defaultConfigKey) => {
-        if (configKey.match(defaultConfigKey)) {
-          SassConfig.config = { ...SassConfig.getConfig(), ...config };
-        }
-      });
-    });    
+    SassConfig.config = config;
   }
 }
 
+/**
+ * Shortcut for getting the current Sass configuration.
+ * @returns The current Sass configuration.
+ * @see {@link SassOptions} for the Sass configuration options.
+ */
 export const { getConfig, setConfig } = SassConfig;

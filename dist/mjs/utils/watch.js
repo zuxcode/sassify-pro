@@ -7,33 +7,35 @@ export default class WatchMode {
     static watchSass(sourceDirectory, outputDir) {
         const browser = browserSync.create('Sassifypro server');
         const spinner = createSpinner();
+        const browserSyncOptions = {
+            server: {
+                baseDir: outputDir ?? 'public',
+                serveStaticOptions: {
+                    extensions: ['html'],
+                },
+            },
+            ui: {
+                port: 6000,
+                weinre: {
+                    port: 8080,
+                },
+            },
+            open: 'local',
+            port: 3000,
+        };
+        const chokidarOptions = {
+            persistent: true,
+            ignored: /(^|[\\/\\])\../,
+        };
         spinner.start({
             text: chalk.green('Starting Watch mode'),
         });
-        const watcher = chokidar.watch(sourceDirectory, {
-            ignored: /(^|[\\/\\])\../,
-            persistent: true,
-        });
+        const watcher = chokidar.watch(sourceDirectory, chokidarOptions);
         spinner.success({ text: chalk.green('Watch mode') });
         watcher.on('ready', () => {
             compileSass({ sourceDir: sourceDirectory, outputDir });
             spinner.success({ text: chalk.green('Compiled successfully \n') });
-            browser.init({
-                server: {
-                    baseDir: outputDir ?? 'public',
-                    serveStaticOptions: {
-                        extensions: ['html'],
-                    },
-                },
-                ui: {
-                    port: 6000,
-                    weinre: {
-                        port: 8080,
-                    },
-                },
-                open: 'local',
-                port: 3000,
-            });
+            browser.init(browserSyncOptions);
         });
         watcher.on('all', (event, path) => {
             function compileAndReload(file, output) {

@@ -1,24 +1,55 @@
-import browserSync from 'browser-sync';
-import chokidar from 'chokidar';
+import browserSync, { Options as BrowserSyncOptions } from 'browser-sync';
+import chokidar, { WatchOptions, FSWatcher } from 'chokidar';
 import chalk from 'chalk';
 import { createSpinner } from 'nanospinner';
 
 import { compileSass } from '../module/compiler.js';
 
-export default class WatchMode {
-  public static watchSass(sourceDirectory: string, outputDir: string) {
-    const browser = browserSync.create('Sassifypro server');
+interface SassifyProBrowserSyncOptions extends BrowserSyncOptions {}
+interface SassifyProChokidarOptions extends WatchOptions {}
 
+/**
+ * Class for managing the watch mode and live reloading of Sass files.
+ */
+export default class WatchMode {
+  /**
+   * Watches the Sass source directory for changes and compiles the Sass files.
+   * It also starts a local server and enables live reloading using BrowserSync.
+   *
+   * @param sourceDirectory - The source directory containing Sass files to watch.
+   * @param outputDir - The output directory for the compiled CSS files.
+   */
+  public static watchSass(sourceDirectory: string, outputDir: string): void {
+    const browser = browserSync.create('Sassifypro server');
     const spinner = createSpinner();
+
+    const browserSyncOptions: SassifyProBrowserSyncOptions = {
+      server: {
+        baseDir: outputDir ?? 'public',
+        serveStaticOptions: {
+          extensions: ['html'],
+        },
+      },
+      ui: {
+        port: 6000,
+        weinre: {
+          port: 8080,
+        },
+      },
+      open: 'local',
+      port: 3000,
+    };
+
+    const chokidarOptions: SassifyProChokidarOptions = {
+      persistent: true,
+      ignored: /(^|[\\/\\])\../,
+    };
 
     spinner.start({
       text: chalk.green('Starting Watch mode'),
     });
 
-    const watcher = chokidar.watch(sourceDirectory, {
-      ignored: /(^|[\\/\\])\../,
-      persistent: true,
-    });
+    const watcher: FSWatcher = chokidar.watch(sourceDirectory, chokidarOptions);
 
     spinner.success({ text: chalk.green('Watch mode') });
 
@@ -26,22 +57,7 @@ export default class WatchMode {
       compileSass({ sourceDir: sourceDirectory, outputDir });
       spinner.success({ text: chalk.green('Compiled successfully \n') });
 
-      browser.init({
-        server: {
-          baseDir: outputDir ?? 'public',
-          serveStaticOptions: {
-            extensions: ['html'],
-          },
-        },
-        ui: {
-          port: 6000,
-          weinre: {
-            port: 8080,
-          },
-        },
-        open: 'local',
-        port: 3000,
-      });
+      browser.init(browserSyncOptions);
     });
 
     watcher.on('all', (event, path) => {
@@ -64,7 +80,6 @@ export default class WatchMode {
             ),
           });
           compileAndReload(path, outputDir);
-
           break;
 
         case 'add':
@@ -86,7 +101,6 @@ export default class WatchMode {
             ),
           });
           compileAndReload(sourceDirectory, outputDir);
-
           break;
 
         case 'unlinkDir':
@@ -94,7 +108,6 @@ export default class WatchMode {
             text: chalk.yellow(`Directory ${path} has been removed`),
           });
           compileAndReload(sourceDirectory, outputDir);
-
           break;
 
         default:
@@ -109,4 +122,7 @@ export default class WatchMode {
   }
 }
 
+/**
+ * Shortcut for watching Sass files and enabling live reloading.
+ */
 export const { watchSass } = WatchMode;

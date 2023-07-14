@@ -12,11 +12,11 @@ export default class MatchFilePath {
                 const filteredFiles = files.filter((file) => !excludeRegex.test(file));
                 filteredFiles.forEach((file) => {
                     fileDependency.push(file);
-                    resolve(fileDependency);
+                    resolve();
                 });
             });
         })
-            .then((result) => cb(null, result))
+            .then(() => cb(null, fileDependency))
             .catch((error) => cb(error, null));
     }
 }

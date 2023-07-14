@@ -1,29 +1,28 @@
 #!/usr/bin/env node
 import { createSpinner } from 'nanospinner';
 import chalk from 'chalk';
-import { version, message, sassifyproInit } from '../cli/initialize.js';
 import { compileSass } from './compiler.js';
 import { watchSass } from '../utils/watch.js';
 import { importPath } from '../utils/import-path.js';
+import { version, message, sassifyproInit } from '../cli/initialize.js';
 export default class SassifyPro {
     static InvalidSrcPath() {
         createSpinner().error({
             text: chalk.red('Error: The "path" argument must be of type string. Received undefined'),
         });
     }
-    static parser(flag, index, argv) {
+    static parseArguments(flag, index, argv) {
         const compileSrc = argv[index + 1];
         const compileOutput = argv[index + 2];
         const importPathOutput = argv[argv.length - 1];
         const importPathSrc = argv.slice(3, argv.length - 1);
         switch (flag) {
             case '--version':
-                version();
-                break;
             case '-v':
                 version();
                 break;
             case 'compile':
+            case 'c':
                 if (!compileSrc) {
                     compileSass({
                         sourceDir: compileSrc,
@@ -38,27 +37,7 @@ export default class SassifyPro {
                     outputDir: compileOutput,
                 });
                 break;
-            case 'c':
-                if (!compileSrc) {
-                    SassifyPro.InvalidSrcPath();
-                    return;
-                }
-                if (compileSrc.match(/^-+/))
-                    return;
-                compileSass({
-                    sourceDir: compileSrc,
-                    outputDir: compileOutput,
-                });
-                break;
             case 'watch':
-                if (!compileSrc) {
-                    SassifyPro.InvalidSrcPath();
-                    return;
-                }
-                if (compileSrc.match(/^-+/))
-                    return;
-                watchSass(compileSrc, compileOutput);
-                break;
             case 'w':
                 if (!compileSrc) {
                     SassifyPro.InvalidSrcPath();
@@ -69,20 +48,10 @@ export default class SassifyPro {
                 watchSass(compileSrc, compileOutput);
                 break;
             case '--import-path':
-                if (!importPathSrc) {
-                    SassifyPro.InvalidSrcPath();
-                }
-                if (importPathSrc.length === 0) {
-                    SassifyPro.InvalidSrcPath();
-                }
-                importPath(compileSrc, importPathOutput, ...importPathSrc);
-                break;
             case '-i':
-                if (!importPathSrc) {
+                if (!importPathSrc || importPathSrc.length === 0) {
                     SassifyPro.InvalidSrcPath();
-                }
-                if (importPathSrc.length === 0) {
-                    SassifyPro.InvalidSrcPath();
+                    return;
                 }
                 importPath(compileSrc, importPathOutput, ...importPathSrc);
                 break;
@@ -94,8 +63,8 @@ export default class SassifyPro {
                     createSpinner().error({
                         text: chalk.red(`bad option: ${flag}`),
                     });
-                    break;
                 }
+                break;
         }
     }
     static run() {
@@ -103,8 +72,8 @@ export default class SassifyPro {
             message();
         }
         else {
-            const sliceArg = process.argv.slice(2);
-            sliceArg.find(SassifyPro.parser);
+            const args = process.argv.slice(2);
+            args.find(SassifyPro.parseArguments);
         }
     }
 }

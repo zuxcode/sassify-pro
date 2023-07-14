@@ -13,7 +13,7 @@ export default class SassConfig {
         return SassConfig.config;
     }
     static setConfig(config) {
-        SassConfig.config = { ...SassConfig.getConfig(), ...config };
+        SassConfig.config = config;
     }
 }
 export const { getConfig, setConfig } = SassConfig;

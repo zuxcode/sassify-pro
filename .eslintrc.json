@@ -21,6 +21,7 @@
     "comma-dangle": "error",
     "linebreak-style": "off",
     "import/no-extraneous-dependencies": "off",
-    "no-param-reassign": "off"
+    "no-param-reassign": "off",
+    "no-useless-catch": "off"
   }
 }
