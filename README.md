@@ -9,6 +9,7 @@ SassifyPro is a powerful Sass/SCSS compiler designed to streamline your CSS deve
 [![Build](https://github.com/Codeauthor1/sassifypro/actions/workflows/node.js.yml/badge.svg)](https://github.com/Codeauthor1/sassifypro/actions/workflows/node.js.yml)
 [![Build](https://github.com/Codeauthor1/sassifypro/actions/workflows/node-test.js.yml/badge.svg)](https://github.com/Codeauthor1/sassifypro/actions/workflows/node-test.js.yml)
 
+![SassifyPro](./banner.png)
 
 ## Installation
 

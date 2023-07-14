@@ -62,8 +62,6 @@ export default class Initialize {
         2,
       );
 
-      await writeFile(configPath, stringifySassifyProConfig, 'utf8');
-
       await fsPromises
         .access(configPath)
         .then(() => {
@@ -76,6 +74,8 @@ export default class Initialize {
             text: chalk.green('sassifypro.json created successfully.'),
           });
         });
+
+      await writeFile(configPath, stringifySassifyProConfig, 'utf8');
     } catch (parseError: unknown) {
       spinner.error({
         text: chalk.red('Error parsing existing sassifypro.json:'),

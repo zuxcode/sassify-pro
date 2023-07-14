@@ -5,5 +5,7 @@
   "style": "expanded",
   "watch": false,
   "excludePaths": {},
-  "importPaths": []
+  "importPaths": [],
+  "quietDeps": false,
+  "sourceMapIncludeSources": false
 }
