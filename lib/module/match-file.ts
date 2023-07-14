@@ -1,45 +1,51 @@
+/* eslint-disable no-unused-vars */
 import glob from 'glob';
-import { createSpinner } from 'nanospinner';
-import chalk from 'chalk';
 
+/**
+ * Utility class for matching file paths.
+ */
 export default class MatchFilePath {
-  public static matchFile(
-    sourcePattern?: string,
+  /**
+   * Matches file paths based on the provided source pattern and optional exclude pattern.
+   *
+   * @param sourcePattern - The source pattern for matching files.
+   * @param cb - The callback function to handle the result or error.
+   * @param excludePattern - The optional regular expression pattern to exclude paths.
+   * @returns A promise that resolves to void.
+   */
+  public static async matchFile(
+    sourcePattern: string,
+    cb: (error: Error | null, result: string[] | null) => void,
     excludePattern?: RegExp,
-  ): string[] {
+  ): Promise<void> {
     const fileDependency: string[] = [];
-
     const fileExtensionPattern = '.@(sass|scss)';
-
     const excludeRegex = excludePattern ?? /\/node_modules\/*\//;
-
     const globPattern = `${sourcePattern}/**/*${fileExtensionPattern}`;
 
-    const spinner = createSpinner().start({
-      color: 'green',
-      text: 'Retrieving Files',
-    });
+    return new Promise<void>((resolve, reject) => {
+      glob(globPattern, { stat: true }, (err, files) => {
+        if (err) reject(err);
 
-    glob(globPattern, { stat: true }, (err, files) => {
-      if (err) {
-        spinner.error({
-          text: ` ${chalk.red('Error finding files:')} ${err}`,
-        });
+        const filteredFiles = files.filter((file) => !excludeRegex.test(file));
 
-        return;
-      }
-
-      const filteredFiles = files.filter((file) => !excludeRegex.test(file));
-
-      filteredFiles.forEach((file) => {
-        fileDependency.push(file);
-        spinner.success({
-          text: `${chalk.green('Loading')} ${file}`,
+        filteredFiles.forEach((file) => {
+          fileDependency.push(file);
+          resolve();
         });
       });
-    });
-    return fileDependency;
+    })
+      .then(() => cb(null, fileDependency))
+      .catch((error) => cb(error, null));
   }
 }
 
+/**
+ * Shortcut for matching file paths.
+ *
+ * @param sourcePattern - The source pattern for matching files.
+ * @param cb - The callback function to handle the result or error.
+ * @param excludePattern - The optional regular expression pattern to exclude paths.
+ * @returns A promise that resolves to void.
+ */
 export const { matchFile } = MatchFilePath;

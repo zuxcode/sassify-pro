@@ -1,17 +1,25 @@
 #!/usr/bin/env node
 
+// Modules
 export { default as Sassifypro } from './module/sassifypro.js';
-
-export { run } from './module/sassifypro.js';
 export { compileSass } from './module/compiler.js';
 export { matchFile } from './module/match-file.js';
+
+// Utils
 export { importPath } from './utils/import-path.js';
 export { watchSass } from './utils/watch.js';
-export { readPkg } from './utils/pkg.js';
-export {} from './config/read-config.js';
-export { message, version } from './cli/initialize.js';
-export { getConfig, setConfig } from './abstract/abstract-config.js';
+export { readPackage } from './utils/package.js';
 
-export { ConfigInterface, TypeStyle } from './types/abstract-type.js';
+// Config
+export { readAndUpdateConfig } from './config/read-and-update-config.js';
 
-export { pkgInterface } from './types/pkg.js';
+// CLI
+export { message, version, sassifyproInit } from './cli/initialize.js';
+export { getConfig } from './cli/sass-options.js';
+
+// Types
+export { SassOptions } from './@types/sass-options.js';
+export { Package } from './@types/package.js';
+
+// CLI entry point
+export { run } from './module/sassifypro.js';

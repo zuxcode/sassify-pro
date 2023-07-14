@@ -3,5 +3,7 @@
   "out": "docs/",
   "name": "SassifyPro",
   "exclude": ["**/*.spec.ts"],
-  "theme": "default"
+  "theme": "default",
+  "entryPointStrategy": "expand",
+  "includes": "lib/**/*.ts"
 }

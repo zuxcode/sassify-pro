@@ -5,116 +5,108 @@ import chalk from 'chalk';
 import { createSpinner } from 'nanospinner';
 
 import { matchFile } from './match-file.js';
-import { readConfig } from '../config/read-config.js';
-
-interface CompilerInterFace {
-  sourceFile: string;
-  outputDirectory: string;
-  style?: 'compressed' | 'expanded';
-  sourceMap?: boolean;
-  quietDeps?: boolean;
-}
+import { readAndUpdateConfig } from '../config/read-and-update-config.js';
+import { SassOptions } from '../@types/sass-options.js';
 
 export default class Compiler {
-  private static preCompile(props: CompilerInterFace) {
-    const config = readConfig();
+  private static async preCompile(props: SassOptions) {
+    const spinner = createSpinner();
+    try {
+      const config = await readAndUpdateConfig();
 
-    const {
-      sourceFile = props.sourceFile ?? config.sourceDir,
-      outputDirectory = props.outputDirectory ?? config.outputDir,
-      style = props.style ?? config.style,
-      sourceMap = props.sourceMap ?? config.sourceMap,
-      quietDeps = props.quietDeps ?? config.quietDeps,
-    } = props;
+      const sanitizedProps = { ...props };
 
-    const spinner = createSpinner().start({
-      color: 'green',
-      text: 'Starting Compilation\n',
-    });
-
-    (async () => {
-      const compileResult = await sass.compileAsync(sourceFile, {
-        alertAscii: true,
-        alertColor: true,
-        charset: true,
-        quietDeps,
-        sourceMap,
-        style,
+      Object.keys(sanitizedProps).forEach((key) => {
+        if (typeof sanitizedProps[key] === 'undefined') {
+          delete sanitizedProps[key];
+        }
       });
 
-      const { loadedUrls } = compileResult;
+      const sassOptions = { ...config, ...sanitizedProps };
+      const { sourceDir, outputDir } = sassOptions;
+      const { css, loadedUrls } = await sass.compileAsync(
+        sourceDir,
+        sassOptions,
+      );
 
-      const isOutDirExist = fs.existsSync(outputDirectory);
+      const isOutputDirExist = fs.existsSync(outputDir);
+
+      if (!isOutputDirExist) {
+        fs.mkdirSync(outputDir, { recursive: true });
+      }
 
       loadedUrls.forEach((url) => {
         const fileName = path.basename(url.pathname);
-        const renameFile = fileName.replace(/.s[ac]ss$/, '.css');
-        const joinFilePath = path.join(outputDirectory, renameFile);
 
-        if (!isOutDirExist) {
-          fs.mkdirSync(outputDirectory, { recursive: true });
-          spinner.success({
-            text: `${chalk.green(
-              'Directory created successfully: ',
-            )} ${outputDirectory}`,
-          });
+        if (!fileName.match(/^_/)) {
+          const renameFile = fileName.replace(/.s[ac]ss$/, '.css');
+          const joinFilePath = path.join(outputDir, renameFile);
+
+          fs.writeFileSync(joinFilePath, css);
         }
-        spinner.success({
-          text: `${chalk.green('Writing ')} ${sourceFile}`,
-        });
-        fs.writeFileSync(joinFilePath, compileResult.css);
       });
-    })();
+
+      return true;
+    } catch (error) {
+      spinner.error({ text: chalk.red(error) });
+      return false;
+    }
   }
 
-  public static compileSass(props: CompilerInterFace) {
+  public static async compileSass(props: SassOptions) {
     const {
-      sourceFile, outputDirectory, style, sourceMap, quietDeps,
+      sourceDir, outputDir, style, sourceMap, quietDeps,
     } = props;
 
     const spinner = createSpinner();
+    const srcPath = sourceDir ?? '';
+    const resolvePath = path.join(process.cwd(), srcPath);
+    const isExist = fs.existsSync(resolvePath);
 
     try {
-      const srcPath = sourceFile ?? '';
-      const resolvePath = path.join(process.cwd(), srcPath);
-      const isExist = fs.existsSync(resolvePath);
-
-      if (!isExist) throw new Error(`Error: Cannot find file ${resolvePath}`);
+      if (!isExist) {
+        throw new Error(`Cannot find file in ${resolvePath} directory`);
+      }
 
       const sourceFileStat = fs.statSync(resolvePath);
 
-      let sassFiles: string[];
-
-      if (sourceFileStat.isDirectory()) {
-        sassFiles = [...matchFile(resolvePath)];
-        console.log(sassFiles);
-      }
-
       if (sourceFileStat.isFile()) {
-        const sassFileStat = fs.statSync(resolvePath);
-        sassFiles = [...resolvePath];
-        if (sassFileStat.size === 0) {
-          spinner.warn({
-            text: `${chalk.yellow(
-              'Compiling an empty sass file: ',
-            )} ${resolvePath}`,
-          });
-        }
-      }
-
-      sassFiles.forEach((sassFile) => {
-        Compiler.preCompile({
-          sourceFile: sassFile,
-          outputDirectory,
+        await Compiler.preCompile({
+          sourceDir: resolvePath,
+          outputDir,
           style,
           sourceMap,
           quietDeps,
         });
-      });
+        spinner.success({
+          text: `${chalk.green('File compiled successfully')}`,
+        });
+      } else {
+        matchFile(resolvePath, async (err, files) => {
+          if (err) {
+            spinner.error({ text: chalk.red(err.message) });
+            console.log(err);
+          } else {
+            files.forEach(async (file) => {
+              await Compiler.preCompile({
+                sourceDir: file,
+                outputDir,
+                style,
+                sourceMap,
+                quietDeps,
+              });
+            });
+            spinner.success({
+              text: `${chalk.green('File compiled successfully')}`,
+            });
+          }
+        });
+      }
     } catch (error) {
       spinner.error({
-        text: `${chalk.red(error.message)}`,
+        text: `${chalk.red(error)}`,
       });
+      console.log(error);
     }
   }
 }

@@ -1,17 +1,29 @@
 import figlet from 'figlet';
 import chalk from 'chalk';
+import { promises as fsPromises } from 'node:fs';
+import { writeFile } from 'fs/promises';
+import { join } from 'node:path';
+import { createSpinner } from 'nanospinner';
 
-import PackageJson from '../utils/pkg.js';
+import { readPackage } from '../utils/package.js';
+import { readAndUpdateConfig } from '../config/read-and-update-config.js';
 
+/**
+ * Provides initialization functionality for SassifyPro.
+ */
 export default class Initialize {
-  public static message() {
-    const pkg = PackageJson.readPkg();
+  /**
+   * Displays the SassifyPro message and ASCII art logo.
+   */
+  public static message(): void {
+    const packageJson = readPackage();
+    const { name, version, author } = packageJson;
     console.log(
-      chalk.bgHex('#ff0000').whiteBright(` ${pkg.name} `),
-      chalk.gray(`v${pkg.version} by ${pkg.author.match(/^codeauthor1/)}`),
+      chalk.bgHex('#ff0000').whiteBright(` ${name} `),
+      chalk.gray(`v${version} by ${author.match(/^codeauthor1/)}`),
     );
     console.log(
-      figlet.textSync(pkg.name, {
+      figlet.textSync(name, {
         font: 'Banner3',
         horizontalLayout: 'default',
         verticalLayout: 'default',
@@ -21,14 +33,59 @@ export default class Initialize {
     );
   }
 
-  public static version() {
-    const pkg = PackageJson.readPkg();
-
+  /**
+   * Displays the SassifyPro version.
+   */
+  public static version(): void {
+    const packageJson = readPackage();
+    const { name, version } = packageJson;
     console.log(
-      chalk.bgHex('#ff0000').whiteBright(` ${pkg.name} `),
-      chalk.gray(`v${pkg.version}`),
+      chalk.bgHex('#ff0000').whiteBright(` ${name} `),
+      chalk.gray(`v${version}`),
     );
+  }
+
+  /**
+   * Initializes SassifyPro by updating the sassifypro.json configuration file.
+   * If the file already exists, it will be overwritten with the updated configuration.
+   */
+  public static async sassifyproInit(): Promise<void> {
+    const configPath = join(process.cwd(), 'sassifypro.json');
+    const spinner = createSpinner();
+
+    try {
+      const sassifyproConfig = await readAndUpdateConfig();
+
+      const stringifySassifyProConfig = JSON.stringify(
+        sassifyproConfig,
+        null,
+        2,
+      );
+
+      await fsPromises
+        .access(configPath)
+        .then(() => {
+          spinner.success({
+            text: chalk.green('sassifypro.json updated successfully.'),
+          });
+        })
+        .catch(() => {
+          spinner.success({
+            text: chalk.green('sassifypro.json created successfully.'),
+          });
+        });
+
+      await writeFile(configPath, stringifySassifyProConfig, 'utf8');
+    } catch (parseError: unknown) {
+      spinner.error({
+        text: chalk.red('Error parsing existing sassifypro.json:'),
+      });
+      console.error(parseError);
+    }
   }
 }
 
-export const { message, version } = Initialize;
+/**
+ * Shortcut for displaying the SassifyPro message and ASCII art logo.
+ */
+export const { message, version, sassifyproInit } = Initialize;

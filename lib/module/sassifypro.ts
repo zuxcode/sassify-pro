@@ -1,26 +1,14 @@
 #!/usr/bin/env node
 
-/**
- * @package SassifyPro
- *
- *  SassifyPro is a powerful Sass/SCSS compiler designed to streamline your CSS
- * development process by compiling Sass/SCSS (Syntactically Awesome Style Sheets) into efficient
- * and browser-compatible CSS code. It provides an intuitive command-line interface and a wide
- * range of features to enhance your productivity and maintainability.
- *
- * @author codeauthor1 <codeauthor2000@gmail.com> (https://www.twitter.com/codeathor1)
- *
- */
-
 import { createSpinner } from 'nanospinner';
 import chalk from 'chalk';
 
-import { version, message } from '../cli/initialize.js';
 import { compileSass } from './compiler.js';
 import { watchSass } from '../utils/watch.js';
 import { importPath } from '../utils/import-path.js';
+import { version, message, sassifyproInit } from '../cli/initialize.js';
 
-type options =
+type Options =
   | 'compile'
   | 'c'
   | '--version'
@@ -34,10 +22,16 @@ type options =
   | '--style'
   | '-s'
   | '--autoprefixer'
-  | '-a';
-
+  | '-a'
+  | '--init';
+/**
+ * Main class for SassifyPro.
+ */
 export default class SassifyPro {
-  private static InvalidSrcPath() {
+  /**
+   * Displays an error message for invalid source path.
+   */
+  private static InvalidSrcPath(): void {
     createSpinner().error({
       text: chalk.red(
         'Error: The "path" argument must be of type string. Received undefined',
@@ -45,7 +39,17 @@ export default class SassifyPro {
     });
   }
 
-  private static parser(flag?: options, index?: number, argv?: string[]) {
+  /**
+   * Parses command line arguments and performs the corresponding action.
+   * @param flag - The command line flag.
+   * @param index - The index of the flag in the argument list.
+   * @param argv - The array of command line arguments.
+   */
+  private static parseArguments(
+    flag?: Options,
+    index?: number,
+    argv?: string[],
+  ): void {
     const compileSrc = argv[index + 1];
     const compileOutput = argv[index + 2];
     const importPathOutput = argv[argv.length - 1];
@@ -53,18 +57,16 @@ export default class SassifyPro {
 
     switch (flag) {
       case '--version':
-        version();
-        break;
-
       case '-v':
         version();
         break;
 
       case 'compile':
+      case 'c':
         if (!compileSrc) {
           compileSass({
-            sourceFile: compileSrc,
-            outputDirectory: compileOutput,
+            sourceDir: compileSrc,
+            outputDir: compileOutput,
           });
 
           return;
@@ -73,36 +75,12 @@ export default class SassifyPro {
         if (compileSrc.match(/^-+/)) return;
 
         compileSass({
-          sourceFile: compileSrc,
-          outputDirectory: compileOutput,
-        });
-        break;
-
-      case 'c':
-        if (!compileSrc) {
-          SassifyPro.InvalidSrcPath();
-          return;
-        }
-
-        if (compileSrc.match(/^-+/)) return;
-
-        compileSass({
-          sourceFile: compileSrc,
-          outputDirectory: compileOutput,
+          sourceDir: compileSrc,
+          outputDir: compileOutput,
         });
         break;
 
       case 'watch':
-        if (!compileSrc) {
-          SassifyPro.InvalidSrcPath();
-          return;
-        }
-
-        if (compileSrc.match(/^-+/)) return;
-
-        watchSass(compileSrc, compileOutput);
-        break;
-
       case 'w':
         if (!compileSrc) {
           SassifyPro.InvalidSrcPath();
@@ -115,27 +93,17 @@ export default class SassifyPro {
         break;
 
       case '--import-path':
-        if (!importPathSrc) {
+      case '-i':
+        if (!importPathSrc || importPathSrc.length === 0) {
           SassifyPro.InvalidSrcPath();
-        }
-
-        if (importPathSrc.length === 0) {
-          SassifyPro.InvalidSrcPath();
+          return;
         }
 
         importPath(compileSrc, importPathOutput, ...importPathSrc);
         break;
 
-      case '-i':
-        if (!importPathSrc) {
-          SassifyPro.InvalidSrcPath();
-        }
-
-        if (importPathSrc.length === 0) {
-          SassifyPro.InvalidSrcPath();
-        }
-
-        importPath(compileSrc, importPathOutput, ...importPathSrc);
+      case '--init':
+        sassifyproInit();
         break;
 
       default:
@@ -143,20 +111,26 @@ export default class SassifyPro {
           createSpinner().error({
             text: chalk.red(`bad option: ${flag}`),
           });
-          break;
         }
+        break;
     }
   }
 
-  public static run() {
+  /**
+   * Runs the SassifyPro command line tool.
+   */
+  public static run(): void {
     if (process.argv.length <= 2) {
       message();
     } else {
-      const sliceArg = process.argv.slice(2);
+      const args = process.argv.slice(2);
 
-      sliceArg.find(SassifyPro.parser);
+      args.find(SassifyPro.parseArguments);
     }
   }
 }
 
+/**
+ * The run method of SassifyPro class.
+ */
 export const { run } = SassifyPro;

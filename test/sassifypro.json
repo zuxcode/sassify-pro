@@ -1,3 +1,11 @@
 {
-    "sourceDir": ""
+  "autoprefixer": true,
+  "outputDir": "public",
+  "sourceDir": "test",
+  "style": "expanded",
+  "watch": false,
+  "excludePaths": {},
+  "importPaths": [],
+  "quietDeps": false,
+  "sourceMapIncludeSources": false
 }
