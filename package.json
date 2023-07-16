@@ -3,35 +3,35 @@
   "name": "sassifypro",
   "version": "1.0.0",
   "description": "SassifyPro is a powerful Sass/SCSS compiler designed to streamline your CSS development process by compiling Sass/SCSS (Syntactically Awesome Style Sheets) into efficient and browser-compatible CSS code. It provides an intuitive command-line interface and a wide range of features to enhance your productivity and maintainability.",
-  "main": "dist/mjs/index.js",
+  "main": "dist/index.mjs",
   "types": "dist/types/index.js",
-  "type": "module",
   "exports": {
     ".": {
       "types": "./dist/types/*.d.ts",
-      "require": "./dist/commonjs/index.cjs",
-      "import": "./dist/mjs/index.js",
-      "default": "./dist/mjs/index.js"
+      "require": "./dist/index.js",
+      "import": "./dist/index.mjs",
+      "default": "./dist/index.js"
     },
     "./package.json": "./package.json",
-    "./dist/commonjs/*": "./dist/commonjs/*",
-    "./dist/mjs/*": "./dist/mjs/*"
+    "./dist/index.js": "./dist/index.js",
+    "./dist/index.mjs": "./dist/index.mjs"
   },
   "imports": {},
   "bin": {
     "sassifyPro": {
-      "esm": "dist/mjs/index.js",
-      "cjs": "dist/commonjs/index.cjs"
+      "esm": "dist/index.mjs",
+      "cjs": "dist/index.js"
     }
   },
   "scripts": {
     "prepare": "husky install",
     "build:clean": "rimraf ./dist ",
-    "build": "npm-run-all build:clean compile && node ./scripts/prepare-package-json.js",
-    "compile:cjs": "tsc --project tsconfig.cjs.json && babel lib --out-dir dist",
-    "compile:esm": "tsc --project tsconfig.mjs.json",
+    "build:webpack": "webpack --config webpack.config.js",
+    "build:rollup": "rollup -c rollup.config.js",
     "compile:types": "tsc --project tsconfig.types.json",
-    "compile": "npm run lint && npm run compile:cjs && npm run compile:esm && npm run compile:types",
+    "compile": "npm run lint && npm run build:webpack && npm run build:rollup && npm run compile:types",
+    "build": "npm run  build:clean && npm run compile && node ./scripts/prepare-package-json.js",
+    "start": "ts-node lib/index.ts",
     "lint": "eslint . --ext .js,.ts",
     "lint:fix": "eslint --fix . --ext .js,.ts",
     "format": "prettier --write \"**/*.{js,ts}\"",
@@ -76,6 +76,7 @@
     "nanospinner": "^1.1.0",
     "npm-run-all": "^4.1.5",
     "prettier": "^2.8.8",
+    "rollup-plugin-typescript2": "^0.35.0",
     "ts-jest": "^29.1.0",
     "ts-node": "^10.9.1",
     "typescript": "^5.1.3",
