@@ -1,9 +1,16 @@
 import { Options } from 'sass';
+import {
+  SassifyProBrowserSyncOptions,
+  SassifyProChokidarOptions,
+} from '../utils/watch.js';
 
 /**
  * Options for Sass compilation.
  */
-export interface SassOptions extends Options<'async'> {
+export interface SassOptions
+  extends Options<'async'>,
+    SassifyProBrowserSyncOptions,
+    SassifyProChokidarOptions {
   /**
    * Specify the path to the Sass file that should be compiled.
    */
@@ -32,5 +39,5 @@ export interface SassOptions extends Options<'async'> {
   /**
    * Specifies whether to watch for changes and recompile Sass files automatically.
    */
-  watch?: boolean;
+  // watch?: boolean;
 }

@@ -16,3 +16,8 @@ jsdoc.conf
 jest*
 tsconfig*
 typedoc.json
+.npmignore
+*config.*
+logo.png
+index.md
+installation.md

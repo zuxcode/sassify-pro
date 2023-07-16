@@ -8,12 +8,12 @@ import { compileSass } from '../module/compiler.js';
 /**
  * Options specific to the Sassify Pro BrowserSync configuration.
  */
-interface SassifyProBrowserSyncOptions extends BrowserSyncOptions {}
+export interface SassifyProBrowserSyncOptions extends BrowserSyncOptions {}
 
 /**
  * Represents the options specific to SassifyProChokidar.
  */
-interface SassifyProChokidarOptions extends WatchOptions {
+export interface SassifyProChokidarOptions extends WatchOptions {
   /**
    * The directories to watch for changes.
    */

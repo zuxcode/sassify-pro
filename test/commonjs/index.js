@@ -1,5 +1,3 @@
-const { default: SassifyPro } = require( 'sassify-pro' );
-
-// cons SassifyPro = require('sassify-pro')
+const {run} = require('sassifypro')
  
-console.log(SassifyPro());
+console.log(run());
