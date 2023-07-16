@@ -19,7 +19,7 @@ export default class ImportPath {
   ): void {
     arg.forEach((file) => {
       const jointFilePath = path.join(rootPath, file);
-      compileSass({ sourceDir: jointFilePath, outputDir: outputPath });
+      compileSass({ sassFilePath: jointFilePath, cssOutputPath: outputPath });
     });
   }
 }

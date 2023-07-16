@@ -1,5 +1,7 @@
 #!/usr/bin/env node
 
+import { run } from './module/sassifypro.js';
+
 // Modules
 export { default as Sassifypro } from './module/sassifypro.js';
 export { compileSass } from './module/compiler.js';
@@ -23,3 +25,5 @@ export { Package } from './@types/package.js';
 
 // CLI entry point
 export { run } from './module/sassifypro.js';
+
+run();

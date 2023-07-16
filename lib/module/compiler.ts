@@ -23,16 +23,16 @@ export default class Compiler {
       });
 
       const sassOptions = { ...config, ...sanitizedProps };
-      const { sourceDir, outputDir } = sassOptions;
+      const { sassFilePath, cssOutputPath } = sassOptions;
       const { css, loadedUrls } = await sass.compileAsync(
-        sourceDir,
+        sassFilePath,
         sassOptions,
       );
 
-      const isOutputDirExist = fs.existsSync(outputDir);
+      const isOutputDirExist = fs.existsSync(cssOutputPath);
 
       if (!isOutputDirExist) {
-        fs.mkdirSync(outputDir, { recursive: true });
+        fs.mkdirSync(cssOutputPath, { recursive: true });
       }
 
       loadedUrls.forEach((url) => {
@@ -40,7 +40,7 @@ export default class Compiler {
 
         if (!fileName.match(/^_/)) {
           const renameFile = fileName.replace(/.s[ac]ss$/, '.css');
-          const joinFilePath = path.join(outputDir, renameFile);
+          const joinFilePath = path.join(cssOutputPath, renameFile);
 
           fs.writeFileSync(joinFilePath, css);
         }
@@ -55,11 +55,11 @@ export default class Compiler {
 
   public static async compileSass(props: SassOptions) {
     const {
-      sourceDir, outputDir, style, sourceMap, quietDeps,
+      sassFilePath, cssOutputPath, style, sourceMap, quietDeps,
     } = props;
 
     const spinner = createSpinner();
-    const srcPath = sourceDir ?? '';
+    const srcPath = sassFilePath ?? '';
     const resolvePath = path.join(process.cwd(), srcPath);
     const isExist = fs.existsSync(resolvePath);
 
@@ -72,8 +72,8 @@ export default class Compiler {
 
       if (sourceFileStat.isFile()) {
         await Compiler.preCompile({
-          sourceDir: resolvePath,
-          outputDir,
+          sassFilePath: resolvePath,
+          cssOutputPath,
           style,
           sourceMap,
           quietDeps,
@@ -89,8 +89,8 @@ export default class Compiler {
           } else {
             files.forEach(async (file) => {
               await Compiler.preCompile({
-                sourceDir: file,
-                outputDir,
+                sassFilePath: file,
+                cssOutputPath,
                 style,
                 sourceMap,
                 quietDeps,

@@ -8,8 +8,8 @@ import { SassOptions } from '../@types/sass-options.js';
 export default abstract class SassConfig {
   private static config: SassOptions = {
     autoprefixer: true,
-    outputDir: 'public',
-    sourceDir: path.basename(process.cwd()),
+    cssOutputPath: 'public',
+    sassFilePath: path.basename(process.cwd()),
     style: 'expanded',
     watch: false,
     excludePaths: /\/node_modules\/*\//,

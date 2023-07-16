@@ -9,7 +9,7 @@
   "exports": {
     ".": {
       "types": "./dist/types/*.d.ts",
-      "require": "./dist/commonjs/index.js",
+      "require": "./dist/commonjs/index.cjs",
       "import": "./dist/mjs/index.js",
       "default": "./dist/mjs/index.js"
     },
@@ -19,13 +19,16 @@
   },
   "imports": {},
   "bin": {
-    " sassifyPro": "dist/mjs/index.js"
+    "sassifyPro": {
+      "esm": "dist/mjs/index.js",
+      "cjs": "dist/commonjs/index.cjs"
+    }
   },
   "scripts": {
     "prepare": "husky install",
     "build:clean": "rimraf ./dist ",
     "build": "npm-run-all build:clean compile && node ./scripts/prepare-package-json.js",
-    "compile:cjs": "tsc --project tsconfig.cjs.json",
+    "compile:cjs": "tsc --project tsconfig.cjs.json && babel lib --out-dir dist",
     "compile:esm": "tsc --project tsconfig.mjs.json",
     "compile:types": "tsc --project tsconfig.types.json",
     "compile": "npm run lint && npm run compile:cjs && npm run compile:esm && npm run compile:types",
@@ -58,6 +61,7 @@
     "@types/node": "^20.3.1",
     "@typescript-eslint/eslint-plugin": "^5.60.0",
     "@typescript-eslint/parser": "^5.60.0",
+    "autoprefixer": "^10.4.14",
     "browser-sync": "^2.29.3",
     "chalk": "^5.2.0",
     "chokidar": "^3.5.3",

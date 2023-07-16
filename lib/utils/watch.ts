@@ -5,8 +5,25 @@ import { createSpinner } from 'nanospinner';
 
 import { compileSass } from '../module/compiler.js';
 
+/**
+ * Options specific to the Sassify Pro BrowserSync configuration.
+ */
 interface SassifyProBrowserSyncOptions extends BrowserSyncOptions {}
-interface SassifyProChokidarOptions extends WatchOptions {}
+
+/**
+ * Represents the options specific to SassifyProChokidar.
+ */
+interface SassifyProChokidarOptions extends WatchOptions {
+  /**
+   * The directories to watch for changes.
+   */
+  directories?: string[];
+
+  /**
+   * The file extensions to include when watching for changes.
+   */
+  extensions?: string[];
+}
 
 /**
  * Class for managing the watch mode and live reloading of Sass files.
@@ -19,13 +36,13 @@ export default class WatchMode {
    * @param sourceDirectory - The source directory containing Sass files to watch.
    * @param outputDir - The output directory for the compiled CSS files.
    */
-  public static watchSass(sourceDirectory: string, outputDir: string): void {
+  public static watchSass(sassFilePath: string, cssOutputPath: string): void {
     const browser = browserSync.create('Sassifypro server');
     const spinner = createSpinner();
 
     const browserSyncOptions: SassifyProBrowserSyncOptions = {
       server: {
-        baseDir: outputDir ?? 'public',
+        baseDir: cssOutputPath ?? 'public',
         serveStaticOptions: {
           extensions: ['html'],
         },
@@ -49,12 +66,12 @@ export default class WatchMode {
       text: chalk.green('Starting Watch mode'),
     });
 
-    const watcher: FSWatcher = chokidar.watch(sourceDirectory, chokidarOptions);
+    const watcher: FSWatcher = chokidar.watch(sassFilePath, chokidarOptions);
 
     spinner.success({ text: chalk.green('Watch mode') });
 
     watcher.on('ready', () => {
-      compileSass({ sourceDir: sourceDirectory, outputDir });
+      compileSass({ sassFilePath, cssOutputPath });
       spinner.success({ text: chalk.green('Compiled successfully \n') });
 
       browser.init(browserSyncOptions);
@@ -62,7 +79,7 @@ export default class WatchMode {
 
     watcher.on('all', (event, path) => {
       function compileAndReload(file: string, output: string) {
-        compileSass({ sourceDir: file, outputDir: output });
+        compileSass({ sassFilePath: file, cssOutputPath: output });
         spinner.success({
           text: chalk.green(
             `File ${path} has been modified. Reloading the browser...`,
@@ -79,7 +96,7 @@ export default class WatchMode {
               `File ${path} has been modified. Recompiling File\n`,
             ),
           });
-          compileAndReload(path, outputDir);
+          compileAndReload(path, cssOutputPath);
           break;
 
         case 'add':
@@ -100,14 +117,14 @@ export default class WatchMode {
               `File ${path} has been removed. Recompiling File`,
             ),
           });
-          compileAndReload(sourceDirectory, outputDir);
+          compileAndReload(sassFilePath, cssOutputPath);
           break;
 
         case 'unlinkDir':
           spinner.success({
             text: chalk.yellow(`Directory ${path} has been removed`),
           });
-          compileAndReload(sourceDirectory, outputDir);
+          compileAndReload(sassFilePath, cssOutputPath);
           break;
 
         default:

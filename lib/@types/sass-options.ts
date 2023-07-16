@@ -5,9 +5,14 @@ import { Options } from 'sass';
  */
 export interface SassOptions extends Options<'async'> {
   /**
-   * The output directory for compiled CSS files.
+   * Specify the path to the Sass file that should be compiled.
    */
-  outputDir?: string;
+  sassFilePath?: string;
+
+  /**
+   * Specify the path where the compiled CSS file should be generated.
+   */
+  cssOutputPath?: string;
 
   /**
    * Specifies whether to enable autoprefixer for vendor prefixing.
@@ -28,9 +33,4 @@ export interface SassOptions extends Options<'async'> {
    * Specifies whether to watch for changes and recompile Sass files automatically.
    */
   watch?: boolean;
-
-  /**
-   * The source directory containing Sass files.
-   */
-  sourceDir?: string;
 }
