@@ -6,8 +6,7 @@
     "rootDir": "./lib",
     "esModuleInterop": true,
     "moduleResolution": "nodenext",
-    "forceConsistentCasingInFileNames": true,
-    "removeComments": true
+    "forceConsistentCasingInFileNames": true
   },
   "exclude": ["node_modules", "dist", "test", "docs", "src"]
 }

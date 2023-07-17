@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import glob from 'glob';
+import { glob } from 'glob';
 
 /**
  * Utility class for matching file paths.
@@ -24,9 +24,7 @@ export default class MatchFilePath {
     const globPattern = `${sourcePattern}/**/*${fileExtensionPattern}`;
 
     return new Promise<void>((resolve, reject) => {
-      glob(globPattern, { stat: true }, (err, files) => {
-        if (err) reject(err);
-
+      glob(globPattern, { stat: true }).then((files) => {
         const filteredFiles = files.filter((file) => !excludeRegex.test(file));
 
         filteredFiles.forEach((file) => {

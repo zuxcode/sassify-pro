@@ -1,6 +1,6 @@
 {
   "author": "codeauthor1 <codeauthor2000@gmail.com> (https://www.twitter.com/codeathor1)",
-  "name": "sassifypro",
+  "name": "sassify-pro",
   "version": "1.0.0",
   "description": "SassifyPro is a powerful Sass/SCSS compiler designed to streamline your CSS development process by compiling Sass/SCSS (Syntactically Awesome Style Sheets) into efficient and browser-compatible CSS code. It provides an intuitive command-line interface and a wide range of features to enhance your productivity and maintainability.",
   "main": "dist/index.mjs",
@@ -19,10 +19,7 @@
   },
   "imports": {},
   "bin": {
-    "sassifypro": {
-      "esm": "dist/index.mjs run",
-      "cjs": "dist/index.cjs run"
-    }
+    "sassifypro": "dist/index.cjs"
   },
   "scripts": {
     "prepare": "husky install",
@@ -37,7 +34,8 @@
     "format": "prettier --write \"**/*.{js,ts}\"",
     "precommit": "lint-staged",
     "dev": "npm run compile && npx yalc publish",
-    "typedoc": "rimraf  ./docs && typedoc"
+    "typedoc": "rimraf  ./docs && typedoc",
+    "grant:linux": "chmod +x dist/index.cjs && chmod +x dist/index.mjs"
   },
   "husky": {
     "hooks": {
@@ -51,34 +49,35 @@
     "*.js": "eslint --cache --fix"
   },
   "dependencies": {
-    "sass": "^1.63.6"
+    "autoprefixer": "^10.4.14",
+    "browser-sync": "^2.29.3",
+    "chokidar": "^3.5.3",
+    "colorette": "^2.0.20",
+    "figlet": "^1.6.0",
+    "glob": "^10.3.3",
+    "nanospinner": "^1.1.0",
+    "sass": "^1.63.6",
+    "websocket": "^1.0.34"
   },
   "devDependencies": {
     "@types/browser-sync": "^2.27.0",
-    "@types/cli-welcome": "^2.2.0",
     "@types/figlet": "^1.5.6",
     "@types/glob": "^8.1.0",
     "@types/node": "^20.3.1",
     "@typescript-eslint/eslint-plugin": "^5.60.0",
     "@typescript-eslint/parser": "^5.60.0",
-    "autoprefixer": "^10.4.14",
-    "browser-sync": "^2.29.3",
-    "chokidar": "^3.5.3",
-    "colorette": "^2.0.20",
     "eslint": "^8.43.0",
     "eslint-config-airbnb-base": "^15.0.0",
     "eslint-plugin-import": "^2.27.5",
     "eslint-plugin-prettier": "^4.2.1",
-    "figlet": "^1.6.0",
     "husky": "^8.0.3",
     "jest": "^29.5.0",
     "lint-staged": "^13.2.2",
-    "nanospinner": "^1.1.0",
     "prettier": "^2.8.8",
+    "rollup-plugin-dts": "^5.3.0",
+    "rollup-plugin-preserve-shebang": "^1.0.1",
     "rollup-plugin-typescript2": "^0.35.0",
-    "ts-jest": "^29.1.0",
-    "ts-node": "^10.9.1",
-    "websocket": "^1.0.34"
+    "ts-jest": "^29.1.0"
   },
   "repository": {
     "type": "git",

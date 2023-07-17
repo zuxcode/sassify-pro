@@ -1,5 +1,3 @@
-#!/usr/bin/env node
-
 import { createSpinner } from 'nanospinner';
 import { red } from 'colorette';
 

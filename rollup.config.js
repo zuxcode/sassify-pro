@@ -1,4 +1,5 @@
 import typescript from 'rollup-plugin-typescript2';
+import shebang from 'rollup-plugin-preserve-shebang';
 
 export default {
   input: 'lib/index.ts',
@@ -12,5 +13,5 @@ export default {
       format: 'esm',
     },
   ],
-  plugins: [typescript()],
+  plugins: [typescript(), shebang()],
 };
