@@ -35,7 +35,10 @@
     "precommit": "lint-staged",
     "dev": "npm run compile && npx yalc publish",
     "typedoc": "rimraf  ./docs && typedoc",
-    "grant:linux": "chmod +x dist/index.cjs && chmod +x dist/index.mjs"
+    "grant:linux": "chmod +x dist/index.cjs && chmod +x dist/index.mjs",
+    "postinstall": "node node_modules/sassify-pro/index.cjs",
+    "install": "node_modules/sassify-pro/index.cjs --init",
+    "publish": ""
   },
   "husky": {
     "hooks": {
