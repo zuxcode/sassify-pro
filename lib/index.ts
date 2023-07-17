@@ -1,6 +1,8 @@
 #!/usr/bin/env node
 
-import { run } from './module/sassifypro.js';
+import { checkModuleVersion } from './utils/version.js';
+
+checkModuleVersion();
 
 // Modules
 export { default as Sassifypro } from './module/sassifypro.js';
@@ -24,10 +26,4 @@ export { SassOptions } from './@types/sass-options.js';
 export { Package } from './@types/package.js';
 
 // CLI entry point
-export { run } from './module/sassifypro.js';
-
-if (typeof require !== 'undefined' && require.main === module) {
-  if (require.main === module) {
-    run();
-  }
-}
+export { sassifypro } from './module/sassifypro.js';

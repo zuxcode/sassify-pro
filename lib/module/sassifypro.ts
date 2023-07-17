@@ -117,7 +117,7 @@ export default class SassifyPro {
   /**
    * Runs the SassifyPro command line tool.
    */
-  public static run(): void {
+  public static sassifypro(): void {
     if (process.argv.length <= 2) {
       message();
     } else {
@@ -131,4 +131,13 @@ export default class SassifyPro {
 /**
  * The run method of SassifyPro class.
  */
-export const { run } = SassifyPro;
+
+if (typeof require !== 'undefined' && require.main === module) {
+  const { sassifypro } = SassifyPro;
+
+  if (require.main === module) {
+    sassifypro();
+  }
+}
+
+export const { sassifypro } = SassifyPro;
