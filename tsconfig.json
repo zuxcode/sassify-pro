@@ -7,8 +7,6 @@
     "esModuleInterop": true,
     "moduleResolution": "nodenext",
     "forceConsistentCasingInFileNames": true,
-    // "resolvePackageJsonExports": true,
-    // "resolvePackageJsonImports": true,
     "removeComments": true
   },
   "exclude": ["node_modules", "dist", "test", "docs", "src"]

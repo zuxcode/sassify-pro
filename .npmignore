@@ -16,8 +16,9 @@ jsdoc.conf
 jest*
 tsconfig*
 typedoc.json
-.npmignore
-*config.*
 logo.png
 index.md
+config.md
 installation.md
+rollup.config.js
+.npmignore

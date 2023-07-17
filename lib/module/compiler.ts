@@ -1,7 +1,7 @@
 import * as sass from 'sass';
 import * as fs from 'node:fs';
 import path from 'node:path';
-import chalk from 'chalk';
+import { green, red } from 'colorette';
 import { createSpinner } from 'nanospinner';
 
 import { matchFile } from './match-file.js';
@@ -48,7 +48,7 @@ export default class Compiler {
 
       return true;
     } catch (error) {
-      spinner.error({ text: chalk.red(error) });
+      spinner.error({ text: red(error) });
       return false;
     }
   }
@@ -79,12 +79,12 @@ export default class Compiler {
           quietDeps,
         });
         spinner.success({
-          text: `${chalk.green('File compiled successfully')}`,
+          text: `${green('File compiled successfully')}`,
         });
       } else {
         matchFile(resolvePath, async (err, files) => {
           if (err) {
-            spinner.error({ text: chalk.red(err.message) });
+            spinner.error({ text: red(err.message) });
             console.log(err);
           } else {
             files.forEach(async (file) => {
@@ -97,14 +97,14 @@ export default class Compiler {
               });
             });
             spinner.success({
-              text: `${chalk.green('File compiled successfully')}`,
+              text: `${green('File compiled successfully')}`,
             });
           }
         });
       }
     } catch (error) {
       spinner.error({
-        text: `${chalk.red(error)}`,
+        text: `${red(error)}`,
       });
       console.log(error);
     }

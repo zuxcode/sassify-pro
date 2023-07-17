@@ -13,14 +13,25 @@ export default class PackageJson {
    *
    * @returns The parsed package.json content as a {@link Package} object.
    */
+
+  dirname = __dirname;
+
   public static readPackage(): Package {
-    const __filename = fileURLToPath(import.meta.url);
-    const __dirname = dirname(__filename);
-    const rootPath = path.resolve(__dirname, '..', '..', '..');
-    const packageJsonPath = path.join(rootPath, 'package.json');
-    const pkgContent = readFileSync(packageJsonPath, { encoding: 'utf-8' });
-    const packageJson: Package = JSON.parse(pkgContent);
-    return packageJson;
+    try {
+      const __filename = fileURLToPath(import.meta.url);
+      const __dirname = dirname(__filename);
+      const rootPath = path.resolve(__dirname, '..');
+      const packageJsonPath = path.join(rootPath, 'package.json');
+      const pkgContent = readFileSync(packageJsonPath, { encoding: 'utf-8' });
+      const packageJson: Package = JSON.parse(pkgContent);
+      return packageJson;
+    } catch (error) {
+      const rootPath = path.resolve(__dirname, '..');
+      const packageJsonPath = path.join(rootPath, 'package.json');
+      const pkgContent = readFileSync(packageJsonPath, { encoding: 'utf-8' });
+      const packageJson: Package = JSON.parse(pkgContent);
+      return packageJson;
+    }
   }
 }
 

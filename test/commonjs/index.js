@@ -1,3 +1,9 @@
 const {run} = require('sassifypro')
  
-console.log(run());
+run();
+
+function man() {
+    console.log("man");
+}
+
+module.exports = {man}

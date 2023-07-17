@@ -1,5 +1,7 @@
 import figlet from 'figlet';
-import chalk from 'chalk';
+import {
+  bgRed, gray, green, red, whiteBright,
+} from 'colorette';
 import { promises as fsPromises } from 'node:fs';
 import { writeFile } from 'fs/promises';
 import { join } from 'node:path';
@@ -13,14 +15,15 @@ import { readAndUpdateConfig } from '../config/read-and-update-config.js';
  */
 export default class Initialize {
   /**
-   * Displays the SassifyPro message and ASCII art logo.
+   * Displays the SassifyPro message and ASCII art logo.S
    */
   public static message(): void {
     const packageJson = readPackage();
     const { name, version, author } = packageJson;
     console.log(
-      chalk.bgHex('#ff0000').whiteBright(` ${name} `),
-      chalk.gray(`v${version} by ${author.match(/^codeauthor1/)}`),
+      bgRed('#ff0000'),
+      whiteBright(` ${name} `),
+      gray(`v${version} by ${author.match(/^codeauthor1/)}`),
     );
     console.log(
       figlet.textSync(name, {
@@ -40,8 +43,9 @@ export default class Initialize {
     const packageJson = readPackage();
     const { name, version } = packageJson;
     console.log(
-      chalk.bgHex('#ff0000').whiteBright(` ${name} `),
-      chalk.gray(`v${version}`),
+      bgRed('#ff0000'),
+      whiteBright(` ${name} `),
+      gray(`v${version}`),
     );
   }
 
@@ -66,19 +70,19 @@ export default class Initialize {
         .access(configPath)
         .then(() => {
           spinner.success({
-            text: chalk.green('sassifypro.json updated successfully.'),
+            text: green('sassifypro.json updated successfully.'),
           });
         })
         .catch(() => {
           spinner.success({
-            text: chalk.green('sassifypro.json created successfully.'),
+            text: green('sassifypro.json created successfully.'),
           });
         });
 
       await writeFile(configPath, stringifySassifyProConfig, 'utf8');
     } catch (parseError: unknown) {
       spinner.error({
-        text: chalk.red('Error parsing existing sassifypro.json:'),
+        text: red('Error parsing existing sassifypro.json:'),
       });
       console.error(parseError);
     }

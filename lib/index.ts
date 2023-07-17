@@ -26,4 +26,8 @@ export { Package } from './@types/package.js';
 // CLI entry point
 export { run } from './module/sassifypro.js';
 
-run();
+if (typeof require !== 'undefined' && require.main === module) {
+  if (require.main === module) {
+    run();
+  }
+}

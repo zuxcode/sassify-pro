@@ -1,6 +1,6 @@
 import browserSync, { Options as BrowserSyncOptions } from 'browser-sync';
 import chokidar, { WatchOptions, FSWatcher } from 'chokidar';
-import chalk from 'chalk';
+import { green, red, yellow } from 'colorette';
 import { createSpinner } from 'nanospinner';
 
 import { compileSass } from '../module/compiler.js';
@@ -63,16 +63,16 @@ export default class WatchMode {
     };
 
     spinner.start({
-      text: chalk.green('Starting Watch mode'),
+      text: green('Starting Watch mode'),
     });
 
     const watcher: FSWatcher = chokidar.watch(sassFilePath, chokidarOptions);
 
-    spinner.success({ text: chalk.green('Watch mode') });
+    spinner.success({ text: green('Watch mode') });
 
     watcher.on('ready', () => {
       compileSass({ sassFilePath, cssOutputPath });
-      spinner.success({ text: chalk.green('Compiled successfully \n') });
+      spinner.success({ text: green('Compiled successfully \n') });
 
       browser.init(browserSyncOptions);
     });
@@ -81,7 +81,7 @@ export default class WatchMode {
       function compileAndReload(file: string, output: string) {
         compileSass({ sassFilePath: file, cssOutputPath: output });
         spinner.success({
-          text: chalk.green(
+          text: green(
             `File ${path} has been modified. Reloading the browser...`,
           ),
         });
@@ -92,49 +92,46 @@ export default class WatchMode {
       switch (event) {
         case 'change':
           spinner.success({
-            text: chalk.green(
-              `File ${path} has been modified. Recompiling File\n`,
-            ),
+            text: green(`File ${path} has been modified. Recompiling File\n`),
           });
           compileAndReload(path, cssOutputPath);
           break;
 
         case 'add':
           spinner.success({
-            text: chalk.green(`File ${path} has been added`),
+            text: green(`File ${path} has been added`),
           });
           break;
 
         case 'addDir':
           spinner.success({
-            text: chalk.green(`Directory ${path} has been added`),
+            text: green(`Directory ${path} has been added`),
           });
           break;
 
         case 'unlink':
           spinner.success({
-            text: chalk.yellow(
-              `File ${path} has been removed. Recompiling File`,
-            ),
+            text: yellow(`File ${path} has been removed. Recompiling File`),
           });
           compileAndReload(sassFilePath, cssOutputPath);
           break;
 
         case 'unlinkDir':
           spinner.success({
-            text: chalk.yellow(`Directory ${path} has been removed`),
+            text: yellow(`Directory ${path} has been removed`),
           });
           compileAndReload(sassFilePath, cssOutputPath);
           break;
 
         default:
-          spinner.error({ text: chalk.red('Unknown Error occurred') });
+          spinner.error({ text: red('Unknown Error occurred') });
           break;
       }
     });
 
     watcher.on('error', (error) => {
-      spinner.error({ text: chalk.red('Error: ', error.message, error) });
+      spinner.error({ text: red(`Error:  ${error.message}`) });
+      console.log(error);
     });
   }
 }

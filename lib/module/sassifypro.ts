@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 import { createSpinner } from 'nanospinner';
-import chalk from 'chalk';
+import { red } from 'colorette';
 
 import { compileSass } from './compiler.js';
 import { watchSass } from '../utils/watch.js';
@@ -33,7 +33,7 @@ export default class SassifyPro {
    */
   private static InvalidSrcPath(): void {
     createSpinner().error({
-      text: chalk.red(
+      text: red(
         'Error: The "path" argument must be of type string. Received undefined',
       ),
     });
@@ -109,7 +109,7 @@ export default class SassifyPro {
       default:
         if (flag.match(/^-+/)) {
           createSpinner().error({
-            text: chalk.red(`bad option: ${flag}`),
+            text: red(`bad option: ${flag}`),
           });
         }
         break;

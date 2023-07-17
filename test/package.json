@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
+  
   "scripts": {
     "start": "npx yalc add sassify-pro; node ./src/mjs/index.js"
   },
