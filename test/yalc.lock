@@ -4,6 +4,10 @@
     "sassifypro": {
       "signature": "269f9bee6e925d1bc76bcdfd2bd444ed",
       "file": true
+    },
+    "sassify-pro": {
+      "signature": "2dc4ce7c9da99952cd2bab94fea29b61",
+      "file": true
     }
   }
 }

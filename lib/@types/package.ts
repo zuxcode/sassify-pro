@@ -3,7 +3,4 @@ export interface Package {
   version: string;
   author: string;
   description: string;
-  dependencies: { 'sassify-pro': string };
-  devDependencies: { 'sassify-pro': string };
-  peerDependencies: { 'sassify-pro': string };
 }

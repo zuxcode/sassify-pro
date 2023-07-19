@@ -6,13 +6,6 @@ for /f "usebackq tokens=2" %%v in (`npm show . version`) do set CURRENT_VERSION=
 REM Prompt for the new version
 set /p NEW_VERSION=Enter the new version (current: %CURRENT_VERSION%):
 
-REM Validate the version format
-set "VERSION_REGEX=^[0-9]+\.[0-9]+\.[0-9]+$"
-echo %NEW_VERSION% | findstr /r /c:"%VERSION_REGEX%" > nul
-if errorlevel 1 (
-  echo Invalid version format. Please use the format X.X.X (e.g., 1.0.0).
-  exit /b 1
-)
 
 REM Update the package version in package.json
 npm version %NEW_VERSION% --no-git-tag-version

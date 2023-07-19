@@ -1,9 +1,5 @@
 #!/usr/bin/env node
 
-import { checkModuleVersion } from './utils/version.js';
-
-checkModuleVersion();
-
 // Modules
 export { default as Sassifypro } from './module/sassifypro.js';
 export { compileSass } from './module/compiler.js';
@@ -18,7 +14,7 @@ export { readPackage } from './utils/package.js';
 export { readAndUpdateConfig } from './config/read-and-update-config.js';
 
 // CLI
-export { message, version, sassifyproInit } from './cli/initialize.js';
+export { message, version, createSassifyproRCFile } from './cli/initialize.js';
 export { getConfig } from './cli/sass-options.js';
 
 // Types

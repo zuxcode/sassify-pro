@@ -22,3 +22,4 @@ config.md
 installation.md
 rollup.config.js
 .npmignore
+publish.bat

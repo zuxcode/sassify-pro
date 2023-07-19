@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
-  
+  "type": "commonjs",
   "scripts": {
     "start": "npx yalc add sassify-pro; node ./src/mjs/index.js"
   },
@@ -11,7 +11,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "sassifypro": "file:.yalc/sassifypro"
+    "sassify-pro": "file:.yalc/sassify-pro"
   },
   "devDependencies": {
     "jest": "^29.5.0",

@@ -1,9 +1,8 @@
 import figlet from 'figlet';
 import {
-  bgRed, gray, green, red, whiteBright,
+  bgRed, gray, green, whiteBright,
 } from 'colorette';
-import { promises as fsPromises } from 'node:fs';
-import { writeFile } from 'fs/promises';
+import { access, writeFile } from 'fs/promises';
 import { join } from 'node:path';
 import { createSpinner } from 'nanospinner';
 
@@ -17,9 +16,8 @@ export default class Initialize {
   /**
    * Displays the SassifyPro message and ASCII art logo.S
    */
-  public static message(): void {
-    const packageJson = readPackage();
-    const { name, version, author } = packageJson;
+  public static async message(): Promise<void> {
+    const { name, version, author } = await readPackage();
     console.log(
       bgRed('#ff0000'),
       whiteBright(` ${name} `),
@@ -39,9 +37,9 @@ export default class Initialize {
   /**
    * Displays the SassifyPro version.
    */
-  public static version(): void {
-    const packageJson = readPackage();
-    const { name, version } = packageJson;
+  public static async version(): Promise<void> {
+    const { name, version } = await readPackage();
+
     console.log(
       bgRed('#ff0000'),
       whiteBright(` ${name} `),
@@ -53,43 +51,29 @@ export default class Initialize {
    * Initializes SassifyPro by updating the sassifypro.json configuration file.
    * If the file already exists, it will be overwritten with the updated configuration.
    */
-  public static async sassifyproInit(): Promise<void> {
-    const configPath = join(process.cwd(), 'sassifypro.json');
+  public static async createSassifyproRCFile(): Promise<void> {
+    const configPath = join(process.cwd(), 'sassifyprorc.json');
     const spinner = createSpinner();
 
-    try {
-      const sassifyproConfig = await readAndUpdateConfig();
+    readAndUpdateConfig().then((sassifyproConfig) => {
+      const stringifySassifyProRc = JSON.stringify(sassifyproConfig, null, 2);
 
-      const stringifySassifyProConfig = JSON.stringify(
-        sassifyproConfig,
-        null,
-        2,
-      );
-
-      await fsPromises
-        .access(configPath)
-        .then(() => {
-          spinner.success({
-            text: green('sassifypro.json updated successfully.'),
-          });
-        })
-        .catch(() => {
-          spinner.success({
-            text: green('sassifypro.json created successfully.'),
-          });
+      if (access(configPath)) {
+        writeFile(configPath, stringifySassifyProRc);
+        spinner.success({
+          text: green('sassifyprorc.json created successfully.'),
         });
-
-      await writeFile(configPath, stringifySassifyProConfig, 'utf8');
-    } catch (parseError: unknown) {
-      spinner.error({
-        text: red('Error parsing existing sassifypro.json:'),
-      });
-      console.error(parseError);
-    }
+      } else {
+        writeFile(configPath, stringifySassifyProRc);
+        spinner.success({
+          text: green('sassifyprorc.json updated successfully.'),
+        });
+      }
+    });
   }
 }
 
 /**
  * Shortcut for displaying the SassifyPro message and ASCII art logo.
  */
-export const { message, version, sassifyproInit } = Initialize;
+export const { message, version, createSassifyproRCFile } = Initialize;

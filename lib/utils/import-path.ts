@@ -13,13 +13,16 @@ export default class ImportPath {
    * @param arg - The list of files to import and compile.
    */
   public static importPath(
-    rootPath: string,
-    outputPath: string,
+    sassFilePath: string,
+    cssOutputPath: string,
     ...arg: string[]
   ): void {
     arg.forEach((file) => {
-      const jointFilePath = path.join(rootPath, file);
-      compileSass({ sassFilePath: jointFilePath, cssOutputPath: outputPath });
+      const sassFile = path.join(sassFilePath, file);
+      compileSass({
+        sassFilePath: sassFile,
+        cssOutputPath,
+      });
     });
   }
 }

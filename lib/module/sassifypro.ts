@@ -4,7 +4,8 @@ import { red } from 'colorette';
 import { compileSass } from './compiler.js';
 import { watchSass } from '../utils/watch.js';
 import { importPath } from '../utils/import-path.js';
-import { version, message, sassifyproInit } from '../cli/initialize.js';
+import { version, message, createSassifyproRCFile } from '../cli/initialize.js';
+import { checkModuleVersion } from '../utils/version.js';
 
 type Options =
   | 'compile'
@@ -101,7 +102,7 @@ export default class SassifyPro {
         break;
 
       case '--init':
-        sassifyproInit();
+        createSassifyproRCFile();
         break;
 
       default:
@@ -127,6 +128,8 @@ export default class SassifyPro {
     }
   }
 }
+
+checkModuleVersion();
 
 /**
  * The run method of SassifyPro class.

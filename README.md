@@ -1,13 +1,10 @@
 # SassifyPro
 
-SassifyPro is a powerful Sass/SCSS compiler designed to streamline your CSS development process by compiling Sass/SCSS (Syntactically Awesome Style Sheets) into efficient and browser-compatible CSS code. It provides an intuitive command-line interface and a wide range of features to enhance your productivity and maintainability.
-
-## Badges
+SassifyPro is a powerful Sass compiler designed to revolutionize your web development workflow.
 
 [![MIT License](https://img.shields.io/badge/License-MIT-green.svg)](https://choosealicense.com/licenses/mit/)
 [![pages-build-deployment](https://github.com/Codeauthor1/sassifypro/actions/workflows/pages/pages-build-deployment/badge.svg)](https://github.com/Codeauthor1/sassifypro/actions/workflows/pages/pages-build-deployment)
 [![Build](https://github.com/Codeauthor1/sassifypro/actions/workflows/node.js.yml/badge.svg)](https://github.com/Codeauthor1/sassifypro/actions/workflows/node.js.yml)
-[![Build](https://github.com/Codeauthor1/sassifypro/actions/workflows/node-test.js.yml/badge.svg)](https://github.com/Codeauthor1/sassifypro/actions/workflows/node-test.js.yml)
 
 ![SassifyPro](./banner.png)
 
@@ -32,7 +29,7 @@ Once you have SassifyPro installed, you can start using it to compile your Sass/
 1. Run the following command:
 
 ```bash
-sassify-pro compile [input-file] [output-file]
+npm run sassify-pro compile [input-file] [output-file]
 ```
 
 Replace `[input-file]` with the path to your Sass/SCSS file and `[output-file]` with the desired path and name for the compiled CSS file.
@@ -40,7 +37,7 @@ Replace `[input-file]` with the path to your Sass/SCSS file and `[output-file]` 
 For example:
 
 ```bash
-sassify-pro compile src/main.scss dist/style.css
+npm run sassify-pro compile src/main.scss dist/style.css
 ```
 
 This will compile the `main.scss` file located in the `src` directory and save the compiled CSS file as style.css in the `dist` directory.
@@ -52,7 +49,7 @@ This will compile the `main.scss` file located in the `src` directory and save t
 SassifyPro provides a convenient watch mode that automatically re-compiles your Sass/SCSS files whenever changes are detected. To use the watch mode, run the following command:
 
 ```bash
-sassify-pro watch [input-directory] [output-directory]
+npm run sassify-pro watch [input-directory] [output-directory]
 ```
 
 Replace `[input-directory]` with the path to your Sass/SCSS source directory and `[output-directory]` with the path to your desired output directory for the compiled CSS files.
@@ -60,7 +57,7 @@ Replace `[input-directory]` with the path to your Sass/SCSS source directory and
 For example:
 
 ```bash
-sassify-pro watch src/ dist/
+npm run sassify-pro watch src/ dist/
 
 ```
 
@@ -71,14 +68,14 @@ This will watch the `src` directory for any changes to Sass/SCSS files and compi
 SassifyPro supports generating source maps to facilitate easier debugging of your CSS in development. To enable source maps, use the `--source-map` flag when compiling your Sass/SCSS files:
 
 ```bash
-sassify-pro compile --source-map [input-file] [output-file]
+npm run sassify-pro compile --source-map [input-file] [output-file]
 
 ```
 
 For example:
 
 ```bash
-sassify-pro compile --source-map src/main.scss dist/style.css
+npm run sassify-pro compile --source-map src/main.scss dist/style.css
 
 ```
 
@@ -89,7 +86,7 @@ This will generate a source map file alongside the compiled CSS file.
 If you have Sass/SCSS files located in different directories and need to import them using relative paths, SassifyPro allows you to define import paths. You can specify the import paths using the `--import-path` flag:
 
 ```bash
-sassify-pro compile --import-path [path] [input-file] [output-file]
+ sassify-pro compile --import-path [path] [input-file] [output-file]
 ```
 
 For example:

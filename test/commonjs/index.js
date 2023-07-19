@@ -1,6 +1,6 @@
-const {run} = require('sassifypro')
+const {sassifypro} = require('sassify-pro')
  
-run();
+sassifypro();
 
 function man() {
     console.log("man");

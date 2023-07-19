@@ -1,25 +1,24 @@
 {
   "author": "codeauthor1 <codeauthor2000@gmail.com> (https://www.twitter.com/codeathor1)",
   "name": "sassify-pro",
-  "version": "1.0.0",
-  "description": "SassifyPro is a powerful Sass/SCSS compiler designed to streamline your CSS development process by compiling Sass/SCSS (Syntactically Awesome Style Sheets) into efficient and browser-compatible CSS code. It provides an intuitive command-line interface and a wide range of features to enhance your productivity and maintainability.",
-  "main": "dist/index.mjs",
+  "version": "1.0.4",
+  "description": "SassifyPro is a powerful Sass compiler designed to revolutionize your web development workflow.",
+  "main": "dist/index.js",
   "types": "dist/types/index.js",
   "type": "module",
   "exports": {
     ".": {
       "types": "./dist/types/*.d.ts",
       "require": "./dist/index.cjs",
-      "import": "./dist/index.mjs",
-      "default": "./dist/index.cjs"
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
     },
     "./package.json": "./package.json",
     "./dist/index.cjs": "./dist/index.cjs",
-    "./dist/index.mjs": "./dist/index.mjs"
+    "./dist/index.js": "./dist/index.js"
   },
-  "imports": {},
   "bin": {
-    "sassifypro": "dist/index.cjs"
+    "sassify-pro": "dist/index.cjs"
   },
   "scripts": {
     "prepare": "husky install",
@@ -27,18 +26,16 @@
     "build:rollup": "rollup -c rollup.config.js",
     "compile:types": "tsc --project tsconfig.types.json",
     "compile": "npm run lint && npm run build:rollup && npm run compile:types",
-    "build": "npm run  build:clean && npm run compile && node ./scripts/prepare-package-json.js",
-    "start": "ts-node ./lib/index.ts",
+    "build": "npm run  build:clean && npm run compile",
+    "start": "npx ts-node ./lib/index.ts",
     "lint": "eslint . --ext .js,.ts",
     "lint:fix": "eslint --fix . --ext .js,.ts",
     "format": "prettier --write \"**/*.{js,ts}\"",
     "precommit": "lint-staged",
     "dev": "npm run compile && npx yalc publish",
     "typedoc": "rimraf  ./docs && typedoc",
-    "grant:linux": "chmod +x dist/index.cjs && chmod +x dist/index.mjs",
-    "postinstall": "node node_modules/sassify-pro/index.cjs",
-    "install": "node_modules/sassify-pro/index.cjs --init",
-    "publish": ""
+    "grant:linux": "chmod +x dist/index.cjs && chmod +x dist/index.js",
+    "release": "npm run build && publish.bat"
   },
   "husky": {
     "hooks": {
@@ -60,6 +57,7 @@
     "glob": "^10.3.3",
     "nanospinner": "^1.1.0",
     "sass": "^1.63.6",
+    "semver": "^7.5.4",
     "websocket": "^1.0.34"
   },
   "devDependencies": {

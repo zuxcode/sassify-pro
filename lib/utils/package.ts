@@ -1,6 +1,6 @@
 import { fileURLToPath } from 'node:url';
 import path, { dirname } from 'node:path';
-import { readFileSync } from 'node:fs';
+import { readFile } from 'fs/promises';
 
 import { Package } from '../@types/package.js';
 
@@ -14,23 +14,19 @@ export default class PackageJson {
    * @returns The parsed package.json content as a {@link Package} object.
    */
 
-  dirname = __dirname;
-
-  public static readPackage(): Package {
+  public static async readPackage(): Promise<Package> {
     try {
       const __filename = fileURLToPath(import.meta.url);
       const __dirname = dirname(__filename);
-      const rootPath = path.resolve(__dirname, '..');
-      const packageJsonPath = path.join(rootPath, 'package.json');
-      const pkgContent = readFileSync(packageJsonPath, { encoding: 'utf-8' });
-      const packageJson: Package = JSON.parse(pkgContent);
-      return packageJson;
+      const moduleRoot = path.resolve(__dirname, '..', 'package.json');
+      const packageMetaData = await readFile(moduleRoot, { encoding: 'utf-8' });
+      const parseMetaData: Package = JSON.parse(packageMetaData);
+      return parseMetaData;
     } catch (error) {
-      const rootPath = path.resolve(__dirname, '..');
-      const packageJsonPath = path.join(rootPath, 'package.json');
-      const pkgContent = readFileSync(packageJsonPath, { encoding: 'utf-8' });
-      const packageJson: Package = JSON.parse(pkgContent);
-      return packageJson;
+      const moduleRoot = path.resolve(__dirname, '..', 'package.json');
+      const packageMetaData = await readFile(moduleRoot, { encoding: 'utf-8' });
+      const parseMetaData: Package = JSON.parse(packageMetaData);
+      return parseMetaData;
     }
   }
 }

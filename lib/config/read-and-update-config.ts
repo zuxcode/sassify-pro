@@ -1,4 +1,4 @@
-import { promises as fsPromises } from 'node:fs';
+import { access, stat, readFile } from 'fs/promises';
 import path from 'node:path';
 
 import { getConfig, setConfig } from '../cli/sass-options.js';
@@ -16,42 +16,33 @@ export default class ReadConfigFile {
    * @throws {Error} If there is an error reading or parsing the configuration file.
    */
   public static async readAndUpdateConfig(): Promise<SassOptions> {
-    const configPath = path.join(process.cwd(), 'sassifypro.json');
+    const configPath = path.join(process.cwd(), 'sassifyprorc.json');
 
-    try {
-      const isConfigPathExist = await fsPromises
-        .access(configPath)
-        .then(() => true)
-        .catch(() => false);
+    return access(configPath)
+      .then(async (): Promise<SassOptions> => {
+        const configFileStat = await stat(configPath);
 
-      if (!isConfigPathExist) {
-        return getConfig();
-      }
+        const isValidConfigFileSize = configFileStat.size !== 0;
 
-      const configFileStat = await fsPromises.stat(configPath);
+        if (!isValidConfigFileSize) {
+          return getConfig();
+        }
 
-      const isValidConfigFileSize = configFileStat.size !== 0;
+        const data = await readFile(configPath, 'utf-8');
 
-      if (!isValidConfigFileSize) {
-        return getConfig();
-      }
+        const parsedUserConfigFile: SassOptions = JSON.parse(data);
 
-      const data = await fsPromises.readFile(configPath, 'utf-8');
+        if (!parsedUserConfigFile) {
+          throw new Error('Invalid Json file.');
+        }
 
-      const parsedUserConfigFile: SassOptions = JSON.parse(data);
+        const updatedConfig = { ...getConfig(), ...parsedUserConfigFile };
 
-      if (!parsedUserConfigFile) {
-        throw new Error('Invalid user configuration file.');
-      }
+        setConfig(updatedConfig);
 
-      const updatedConfig = { ...getConfig(), ...parsedUserConfigFile };
-
-      setConfig(updatedConfig);
-
-      return updatedConfig;
-    } catch (error) {
-      throw error;
-    }
+        return updatedConfig;
+      })
+      .catch(() => getConfig());
   }
 }
 
