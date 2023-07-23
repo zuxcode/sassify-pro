@@ -15,26 +15,43 @@ export default class MatchFilePath {
    */
   public static async matchFile(
     sourcePattern: string,
-    cb: (error: Error | null, result: string[] | null) => void,
+    cb?: (error: Error | null, result: string[] | null) => void,
     excludePattern?: RegExp,
-  ): Promise<void> {
+  ): Promise<string[]> {
     const fileDependency: string[] = [];
-    const fileExtensionPattern = '.@(sass|scss)';
-    const excludeRegex = excludePattern ?? /\/node_modules\/*\//;
-    const globPattern = `${sourcePattern}/**/*${fileExtensionPattern}`;
+    return new Promise<string[]>((resolve, reject) => {
+      const fileExtensionPattern = '.@(sass|scss)';
 
-    return new Promise<void>((resolve, reject) => {
-      glob(globPattern, { stat: true }).then((files) => {
+      const excludeRegex = excludePattern ?? /\/node_modules\/*\//;
+
+      const globPattern = `${sourcePattern}/**/*${fileExtensionPattern}`;
+
+      function globThenFunc(files: string[]) {
         const filteredFiles = files.filter((file) => !excludeRegex.test(file));
 
-        filteredFiles.forEach((file) => {
+        function updateFileDep(file: string) {
           fileDependency.push(file);
-          resolve();
-        });
-      });
-    })
-      .then(() => cb(null, fileDependency))
-      .catch((error) => cb(error, null));
+        }
+
+        filteredFiles.forEach(updateFileDep);
+      }
+
+      function resolveFuc() {
+        cb(null, fileDependency);
+        resolve(fileDependency);
+      }
+
+      function rejectFuc(error: Error) {
+        cb(error, null);
+        reject(error);
+      }
+
+      glob(globPattern, { stat: true })
+        .then(globThenFunc)
+
+        .then(resolveFuc)
+        .catch(rejectFuc);
+    });
   }
 }
 

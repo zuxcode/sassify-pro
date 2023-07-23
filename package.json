@@ -22,9 +22,9 @@
   },
   "scripts": {
     "prepare": "husky install",
-    "build:clean": "rimraf ./dist ",
+    "build:clean": "rimraf ./dist && rimraf tmp",
     "build:rollup": "rollup -c rollup.config.js",
-    "compile:types": "tsc --project tsconfig.types.json",
+    "compile:types": "tsc --project tsconfig.types.json && rollup -c rollup.config.types.js && rimraf tmp",
     "compile": "npm run lint && npm run build:rollup && npm run compile:types",
     "build": "npm run  build:clean && npm run compile",
     "start": "npx ts-node ./lib/index.ts",
@@ -32,7 +32,7 @@
     "lint:fix": "eslint --fix . --ext .js,.ts",
     "format": "prettier --write \"**/*.{js,ts}\"",
     "precommit": "lint-staged",
-    "dev": "npm run compile && npx yalc publish",
+    "dev": "npm run compile && npx yalc publish && rimraf tmp",
     "typedoc": "rimraf  ./docs && typedoc",
     "grant:linux": "chmod +x dist/index.cjs && chmod +x dist/index.js",
     "release": "npm run build && publish.bat"
@@ -67,6 +67,7 @@
     "@types/node": "^20.3.1",
     "@typescript-eslint/eslint-plugin": "^5.60.0",
     "@typescript-eslint/parser": "^5.60.0",
+    "dts-bundle": "^0.7.3",
     "eslint": "^8.43.0",
     "eslint-config-airbnb-base": "^15.0.0",
     "eslint-plugin-import": "^2.27.5",

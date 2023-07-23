@@ -18,7 +18,7 @@
 <h1>Function importPath</h1></div>
 <section class="tsd-panel">
 <ul class="tsd-signatures">
-<li class="tsd-signature tsd-anchor-link" id="importPath"><span class="tsd-kind-call-signature">import<wbr/>Path</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">rootPath</span>, <span class="tsd-kind-parameter">outputPath</span>, <span class="tsd-signature-symbol">...</span><span class="tsd-kind-parameter">arg</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span><a href="#importPath" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><g stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round" id="icon-anchor"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path d="M10 14a3.5 3.5 0 0 0 5 0l4 -4a3.5 3.5 0 0 0 -5 -5l-.5 .5"></path><path d="M14 10a3.5 3.5 0 0 0 -5 0l-4 4a3.5 3.5 0 0 0 5 5l.5 -.5"></path></g></svg></a></li>
+<li class="tsd-signature tsd-anchor-link" id="importPath"><span class="tsd-kind-call-signature">import<wbr/>Path</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">sassFilePath</span>, <span class="tsd-kind-parameter">cssOutputPath</span>, <span class="tsd-signature-symbol">...</span><span class="tsd-kind-parameter">arg</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span><a href="#importPath" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><g stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round" id="icon-anchor"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path d="M10 14a3.5 3.5 0 0 0 5 0l4 -4a3.5 3.5 0 0 0 -5 -5l-.5 .5"></path><path d="M14 10a3.5 3.5 0 0 0 -5 0l-4 4a3.5 3.5 0 0 0 5 5l.5 -.5"></path></g></svg></a></li>
 <li class="tsd-description">
 <div class="tsd-comment tsd-typography"><p>Imports Sass files from custom paths and compiles them.</p>
 </div>
@@ -26,15 +26,9 @@
 <h4 class="tsd-parameters-title">Parameters</h4>
 <ul class="tsd-parameter-list">
 <li>
-<h5><span class="tsd-kind-parameter">rootPath</span>: <span class="tsd-signature-type">string</span></h5>
-<div class="tsd-comment tsd-typography"><p>The root path where the Sass files are located.</p>
-</div>
-<div class="tsd-comment tsd-typography"></div></li>
+<h5><span class="tsd-kind-parameter">sassFilePath</span>: <span class="tsd-signature-type">string</span></h5></li>
 <li>
-<h5><span class="tsd-kind-parameter">outputPath</span>: <span class="tsd-signature-type">string</span></h5>
-<div class="tsd-comment tsd-typography"><p>The output path for the compiled CSS files.</p>
-</div>
-<div class="tsd-comment tsd-typography"></div></li>
+<h5><span class="tsd-kind-parameter">cssOutputPath</span>: <span class="tsd-signature-type">string</span></h5></li>
 <li>
 <h5><code class="tsd-tag ts-flagRest">Rest</code> <span class="tsd-signature-symbol">...</span><span class="tsd-kind-parameter">arg</span>: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span></h5>
 <div class="tsd-comment tsd-typography"><p>The list of files to import and compile.</p>
@@ -43,7 +37,7 @@
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
 <div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/Codeauthor1/sassifypro/blob/0921858/lib/utils/import-path.ts#L15">lib/utils/import-path.ts:15</a></li></ul></aside></li></ul></section></div>
+<li>Defined in <a href="https://github.com/Codeauthor1/sassifypro/blob/dce9b41/lib/utils/import-path.ts#L15">lib/utils/import-path.ts:15</a></li></ul></aside></li></ul></section></div>
 <div class="col-sidebar">
 <div class="page-menu">
 <div class="tsd-navigation settings">
@@ -88,8 +82,10 @@
 <li><a href="../modules/utils_import_path-1.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>utils/import-<wbr/>path</span></a></li>
 <li><a href="../modules/utils_package.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>utils/package</span></a></li>
 <li><a href="../modules/utils_package-1.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>utils/package</span></a></li>
+<li><a href="../modules/utils_version.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>utils/version</span></a></li>
+<li><a href="../modules/utils_version-1.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>utils/version</span></a></li>
 <li><a href="../modules/utils_watch.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>utils/watch</span></a></li>
 <li><a href="../modules/utils_watch-1.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>utils/watch</span></a></li></ul></nav></div></div></div>
 <div class="tsd-generator">
-<p>Generated using <a href="https://typedoc.org/" target="_blank">TypeDoc</a></p></div>
+<p>Created by CodeAuthor1 <a href="https://www.twitter.com/codeauthor1/" target="_blank">Twitter</a></p></div>
 <div class="overlay"></div></body></html>

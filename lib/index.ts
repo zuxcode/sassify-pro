@@ -14,7 +14,7 @@ export { readPackage } from './utils/package.js';
 export { readAndUpdateConfig } from './config/read-and-update-config.js';
 
 // CLI
-export { message, version, createSassifyproRCFile } from './cli/initialize.js';
+export { message, version, CreateSassifyproFile } from './cli/initialize.js';
 export { getConfig } from './cli/sass-options.js';
 
 // Types

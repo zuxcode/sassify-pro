@@ -4,8 +4,8 @@ import { red } from 'colorette';
 import { compileSass } from './compiler.js';
 import { watchSass } from '../utils/watch.js';
 import { importPath } from '../utils/import-path.js';
-import { version, message, createSassifyproRCFile } from '../cli/initialize.js';
-import { checkModuleVersion } from '../utils/version.js';
+import { version, message, CreateSassifyproFile } from '../cli/initialize.js';
+import '../utils/version.js';
 
 type Options =
   | 'compile'
@@ -15,14 +15,14 @@ type Options =
   | 'watch'
   | 'w'
   | '--source-map'
-  | '-S'
   | '--import-path'
-  | '-i'
   | '--style'
   | '-s'
   | '--autoprefixer'
   | '-a'
-  | '--init';
+  | '--init'
+  | '--help'
+  | '-h';
 /**
  * Main class for SassifyPro.
  */
@@ -92,8 +92,7 @@ export default class SassifyPro {
         break;
 
       case '--import-path':
-      case '-i':
-        if (!importPathSrc || importPathSrc.length === 0) {
+        if (importPathSrc.length === 0) {
           SassifyPro.InvalidSrcPath();
           return;
         }
@@ -102,11 +101,28 @@ export default class SassifyPro {
         break;
 
       case '--init':
-        createSassifyproRCFile();
+        CreateSassifyproFile();
+        break;
+
+      case '--source-map':
+        break;
+
+      case '--style':
+      case '-s':
+        break;
+
+      case '--autoprefixer':
+      case '-a':
+        break;
+
+      case '--help':
+      case '-h':
         break;
 
       default:
-        if (flag.match(/^-+/)) {
+        // eslint-disable-next-line no-case-declarations
+        const __exhaustiveCheck: string = flag;
+        if (__exhaustiveCheck.match(/^-+/)) {
           createSpinner().error({
             text: red(`bad option: ${flag}`),
           });
@@ -128,8 +144,6 @@ export default class SassifyPro {
     }
   }
 }
-
-checkModuleVersion();
 
 /**
  * The run method of SassifyPro class.

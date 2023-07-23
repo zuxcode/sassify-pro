@@ -1,6 +1,9 @@
-import { access, stat, readFile } from 'fs/promises';
+import {
+  access, stat, readFile, constants,
+} from 'fs/promises';
 import path from 'node:path';
 
+import { Stats } from 'fs';
 import { getConfig, setConfig } from '../cli/sass-options.js';
 import type { SassOptions } from '../@types/sass-options.js';
 
@@ -16,20 +19,12 @@ export default class ReadConfigFile {
    * @throws {Error} If there is an error reading or parsing the configuration file.
    */
   public static async readAndUpdateConfig(): Promise<SassOptions> {
-    const configPath = path.join(process.cwd(), 'sassifyprorc.json');
+    return new Promise((resolve, reject) => {
+      const currentWorkingDirectory = process.cwd();
 
-    return access(configPath)
-      .then(async (): Promise<SassOptions> => {
-        const configFileStat = await stat(configPath);
+      const configPath = path.join(currentWorkingDirectory, 'sassifypro.json');
 
-        const isValidConfigFileSize = configFileStat.size !== 0;
-
-        if (!isValidConfigFileSize) {
-          return getConfig();
-        }
-
-        const data = await readFile(configPath, 'utf-8');
-
+      function readFileCallBack(data: string) {
         const parsedUserConfigFile: SassOptions = JSON.parse(data);
 
         if (!parsedUserConfigFile) {
@@ -40,9 +35,31 @@ export default class ReadConfigFile {
 
         setConfig(updatedConfig);
 
-        return updatedConfig;
-      })
-      .catch(() => getConfig());
+        resolve(updatedConfig);
+      }
+
+      function accessCatchCallBack() {
+        reject(getConfig());
+      }
+
+      function statCallBack(configStat: Stats) {
+        const isValidConfigSize = configStat.size !== 0;
+
+        if (!isValidConfigSize) {
+          resolve(getConfig());
+        } else {
+          readFile(configPath, 'utf-8').then(readFileCallBack);
+        }
+      }
+
+      function accessThenCallBack() {
+        stat(configPath).then(statCallBack);
+      }
+
+      access(configPath, constants.R_OK)
+        .then(accessThenCallBack)
+        .catch(accessCatchCallBack);
+    });
   }
 }
 

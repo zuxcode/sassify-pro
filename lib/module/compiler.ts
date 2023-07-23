@@ -1,5 +1,7 @@
 import * as sass from 'sass';
-import * as fs from 'node:fs';
+import {
+  access, mkdir, writeFile, stat,
+} from 'fs/promises';
 import path from 'node:path';
 import { green, red } from 'colorette';
 import { createSpinner } from 'nanospinner';
@@ -9,10 +11,10 @@ import { readAndUpdateConfig } from '../config/read-and-update-config.js';
 import { SassOptions } from '../@types/sass-options.js';
 
 export default class Compiler {
-  private static async preCompile(props: SassOptions) {
+  private static async preCompile(props: SassOptions): Promise<void> {
     const spinner = createSpinner();
     try {
-      const config = await readAndUpdateConfig();
+      const sassifyproConfig = await readAndUpdateConfig();
 
       const sanitizedProps = { ...props };
 
@@ -22,34 +24,36 @@ export default class Compiler {
         }
       });
 
-      const sassOptions = { ...config, ...sanitizedProps };
+      const sassOptions = { ...sassifyproConfig, ...sanitizedProps };
+
       const { sassFilePath, cssOutputPath } = sassOptions;
+
       const { css, loadedUrls } = await sass.compileAsync(
         sassFilePath,
         sassOptions,
       );
 
-      const isOutputDirExist = fs.existsSync(cssOutputPath);
+      const writeCSSFile = () => {
+        const getFile = (url: URL) => {
+          const fileName = path.basename(url.pathname);
 
-      if (!isOutputDirExist) {
-        fs.mkdirSync(cssOutputPath, { recursive: true });
-      }
+          if (!fileName.match(/^_/)) {
+            const renameFile = fileName.replace(/.s[ac]ss$/, '.css');
+            const joinFilePath = path.join(cssOutputPath, renameFile);
 
-      loadedUrls.forEach((url) => {
-        const fileName = path.basename(url.pathname);
+            writeFile(joinFilePath, css);
+          }
+        };
+        loadedUrls.forEach(getFile);
+      };
 
-        if (!fileName.match(/^_/)) {
-          const renameFile = fileName.replace(/.s[ac]ss$/, '.css');
-          const joinFilePath = path.join(cssOutputPath, renameFile);
+      const createOutputDir = () => {
+        mkdir(cssOutputPath, { recursive: true }).then(writeCSSFile);
+      };
 
-          fs.writeFileSync(joinFilePath, css);
-        }
-      });
-
-      return true;
+      access(cssOutputPath).then(writeCSSFile).catch(createOutputDir);
     } catch (error) {
       spinner.error({ text: red(error) });
-      return false;
     }
   }
 
@@ -58,56 +62,57 @@ export default class Compiler {
       sassFilePath, cssOutputPath, style, sourceMap, quietDeps,
     } = props;
 
+    const { preCompile } = Compiler;
+
     const spinner = createSpinner();
     const srcPath = sassFilePath ?? '';
-    const resolvePath = path.join(process.cwd(), srcPath);
-    const isExist = fs.existsSync(resolvePath);
 
-    try {
-      if (!isExist) {
-        throw new Error(`Cannot find file in ${resolvePath} directory`);
-      }
+    const currentWorkingDirectory = process.cwd();
 
-      const sourceFileStat = fs.statSync(resolvePath);
+    const resolvePath = path.join(currentWorkingDirectory, srcPath);
 
-      if (sourceFileStat.isFile()) {
-        await Compiler.preCompile({
-          sassFilePath: resolvePath,
-          cssOutputPath,
-          style,
-          sourceMap,
-          quietDeps,
-        });
+    function compile(file?: string) {
+      preCompile({
+        sassFilePath: file ?? resolvePath,
+        cssOutputPath,
+        style,
+        sourceMap,
+        quietDeps,
+      }).then(() => {
         spinner.success({
-          text: `${green('File compiled successfully')}`,
+          text: green(`File ${file ?? resolvePath} compiled successfully`),
         });
-      } else {
-        matchFile(resolvePath, async (err, files) => {
-          if (err) {
-            spinner.error({ text: red(err.message) });
-            console.log(err);
-          } else {
-            files.forEach(async (file) => {
-              await Compiler.preCompile({
-                sassFilePath: file,
-                cssOutputPath,
-                style,
-                sourceMap,
-                quietDeps,
-              });
-            });
-            spinner.success({
-              text: `${green('File compiled successfully')}`,
-            });
-          }
-        });
-      }
-    } catch (error) {
-      spinner.error({
-        text: `${red(error)}`,
       });
-      console.log(error);
     }
+
+    async function callCompiler() {
+      const sourceFileStat = await stat(resolvePath);
+      if (sourceFileStat.isFile()) {
+        compile();
+
+        return;
+      }
+
+      function matchFileCallBack(error: Error, files: string[]) {
+        if (error) {
+          spinner.error({ text: red(error.message) });
+
+          console.log(error);
+
+          return;
+        }
+
+        files.forEach((file) => compile(file));
+      }
+
+      matchFile(resolvePath, matchFileCallBack);
+    }
+
+    access(resolvePath)
+      .finally(callCompiler)
+      .catch(() => {
+        console.log(red(`Error: No such file or directory as ${resolvePath}`));
+      });
   }
 }
 

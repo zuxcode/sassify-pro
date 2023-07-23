@@ -46,3 +46,5 @@ export default class Version {
 }
 
 export const { checkModuleVersion } = Version;
+
+checkModuleVersion();

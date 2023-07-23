@@ -1,0 +1,5 @@
+{
+  "name": "sassify-pro",
+  "main": "lib/index.d.ts",
+  "out": "dist/@types/sassifypro.d.ts"
+}

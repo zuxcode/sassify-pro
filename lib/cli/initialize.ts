@@ -2,7 +2,7 @@ import figlet from 'figlet';
 import {
   bgRed, gray, green, whiteBright,
 } from 'colorette';
-import { access, writeFile } from 'fs/promises';
+import { writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { createSpinner } from 'nanospinner';
 
@@ -51,29 +51,43 @@ export default class Initialize {
    * Initializes SassifyPro by updating the sassifypro.json configuration file.
    * If the file already exists, it will be overwritten with the updated configuration.
    */
-  public static async createSassifyproRCFile(): Promise<void> {
-    const configPath = join(process.cwd(), 'sassifyprorc.json');
+  public static async CreateSassifyproFile(): Promise<void> {
     const spinner = createSpinner();
 
-    readAndUpdateConfig().then((sassifyproConfig) => {
+    const currentWorkingDirectory = process.cwd();
+
+    const sassifyproConfigPath = join(
+      currentWorkingDirectory,
+      'sassifypro.json',
+    );
+
+    try {
+      const sassifyproConfig = await readAndUpdateConfig();
+
       const stringifySassifyProRc = JSON.stringify(sassifyproConfig, null, 2);
 
-      if (access(configPath)) {
-        writeFile(configPath, stringifySassifyProRc);
-        spinner.success({
-          text: green('sassifyprorc.json created successfully.'),
-        });
-      } else {
-        writeFile(configPath, stringifySassifyProRc);
-        spinner.success({
-          text: green('sassifyprorc.json updated successfully.'),
-        });
-      }
-    });
+      writeFile(sassifyproConfigPath, stringifySassifyProRc);
+
+      spinner.success({
+        text: green('sassifyprorc.json updated successfully.'),
+      });
+    } catch (defaultSassifyproConfig) {
+      const stringifySassifyProRc = JSON.stringify(
+        defaultSassifyproConfig,
+        null,
+        2,
+      );
+
+      await writeFile(sassifyproConfigPath, stringifySassifyProRc);
+
+      spinner.success({
+        text: green('sassifyprorc.json created successfully.'),
+      });
+    }
   }
 }
 
 /**
  * Shortcut for displaying the SassifyPro message and ASCII art logo.
  */
-export const { message, version, createSassifyproRCFile } = Initialize;
+export const { message, version, CreateSassifyproFile } = Initialize;
