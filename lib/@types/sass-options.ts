@@ -36,6 +36,8 @@ export interface SassOptions
    */
   importPaths?: string[];
 
+  baseDir?: string;
+
   /**
    * Specifies whether to watch for changes and recompile Sass files automatically.
    */

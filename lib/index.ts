@@ -1,5 +1,7 @@
 #!/usr/bin/env node
 
+import './utils/version.js';
+
 // Modules
 export { default as Sassifypro } from './module/sassifypro.js';
 export { compileSass } from './module/compiler.js';

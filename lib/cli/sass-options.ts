@@ -16,6 +16,8 @@ export default abstract class SassConfig {
     importPaths: [],
     quietDeps: false,
     sourceMapIncludeSources: false,
+    baseDir: path.basename(process.cwd()),
+    verbose: false,
   };
 
   /**

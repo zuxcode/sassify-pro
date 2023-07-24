@@ -1,6 +1,8 @@
 import path from 'node:path';
 import { compileSass } from '../module/compiler.js';
 
+import { readAndUpdateConfig } from '../config/read-and-update-config.js';
+
 /**
  * Utility class for importing Sass files from custom paths.
  */
@@ -17,13 +19,19 @@ export default class ImportPath {
     cssOutputPath: string,
     ...arg: string[]
   ): void {
-    arg.forEach((file) => {
-      const sassFile = path.join(sassFilePath, file);
-      compileSass({
-        sassFilePath: sassFile,
-        cssOutputPath,
-      });
-    });
+    function compile() {
+      function forEachCallBack(file: string) {
+        const sassFile = path.join(sassFilePath, file);
+        compileSass({
+          sassFilePath: sassFile,
+          cssOutputPath,
+        });
+      }
+
+      arg.forEach(forEachCallBack);
+    }
+
+    compile();
   }
 }
 
@@ -31,3 +39,7 @@ export default class ImportPath {
  * Shortcut for importing Sass files from custom paths and compiling them.
  */
 export const { importPath } = ImportPath;
+readAndUpdateConfig().then((Opts) => {
+  const { importPaths, baseDir, cssOutputPath } = Opts;
+  if (importPaths.length !== 0) importPath(baseDir, cssOutputPath, ...importPaths);
+});

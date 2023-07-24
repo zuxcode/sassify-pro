@@ -34,8 +34,8 @@
     "precommit": "lint-staged",
     "dev": "npm run compile && npx yalc publish && rimraf tmp",
     "typedoc": "rimraf  ./docs && typedoc",
-    "grant:linux": "chmod +x dist/index.cjs && chmod +x dist/index.js",
-    "release": "npm run build && publish.bat"
+    "release": "npm run build && publish.bat",
+    "test": "jest"
   },
   "husky": {
     "hooks": {

@@ -5,7 +5,6 @@ import { compileSass } from './compiler.js';
 import { watchSass } from '../utils/watch.js';
 import { importPath } from '../utils/import-path.js';
 import { version, message, CreateSassifyproFile } from '../cli/initialize.js';
-import '../utils/version.js';
 
 type Options =
   | 'compile'
