@@ -105,10 +105,10 @@ Here's an example `.sassifyprorc` file:
 
 ```json
 {
-  "sourceDir": "src",
-  "outputDir": "dist",
-  "sourceMap": true,
-  "importPaths": ["src/scss"]
+  "sassFilePath": "src",
+  "cssOutputPath": "public",
+  "sourceMap": false,
+  "importPaths": []
 }
 ```
 
@@ -116,7 +116,7 @@ With this configuration file present, you can omit certain options when running 
 
 ## Documentation
 
-For detailed documentation on using SassifyPro, please refer to the [official documentation.](https://github.com/Codeauthor1/sassify-pro#readme)
+For detailed documentation on using SassifyPro, please refer to the [official documentation.](https://codeauthor1.github.io/sassifypro/)
 
 ## Contributing
 

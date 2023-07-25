@@ -2,11 +2,12 @@
   "compilerOptions": {
     "target": "ESNext",
     "module": "ESNext",
-    "outDir": "dist",
+    "outDir": "dist/",
     "rootDir": "./lib",
     "esModuleInterop": true,
     "moduleResolution": "nodenext",
     "forceConsistentCasingInFileNames": true,
+    "declaration": true,
     "removeComments": true
   },
   "exclude": ["node_modules", "dist", "test", "docs", "src"]

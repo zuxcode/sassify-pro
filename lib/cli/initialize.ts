@@ -2,12 +2,13 @@ import figlet from 'figlet';
 import {
   bgRed, gray, green, whiteBright,
 } from 'colorette';
-import { writeFile } from 'node:fs/promises';
+import { writeFile, access } from 'node:fs/promises';
 import { join } from 'node:path';
 import { createSpinner } from 'nanospinner';
 
 import { readPackage } from '../utils/package.js';
 import { readAndUpdateConfig } from '../config/read-and-update-config.js';
+import { getConfig } from './sass-options.js';
 
 /**
  * Provides initialization functionality for SassifyPro.
@@ -61,29 +62,33 @@ export default class Initialize {
       'sassifypro.json',
     );
 
-    try {
-      const sassifyproConfig = await readAndUpdateConfig();
+    access(sassifyproConfigPath)
+      .then(async () => {
+        const sassifyproConfig = await readAndUpdateConfig();
 
-      const stringifySassifyProRc = JSON.stringify(sassifyproConfig, null, 2);
+        const stringifySassifyProRc = JSON.stringify(sassifyproConfig, null, 2);
 
-      writeFile(sassifyproConfigPath, stringifySassifyProRc);
+        writeFile(sassifyproConfigPath, stringifySassifyProRc);
 
-      spinner.success({
-        text: green('sassifyprorc.json updated successfully.'),
+        spinner.success({
+          text: green('sassifyprorc.json updated successfully.'),
+        });
+      })
+      .catch(async () => {
+        const defaultSassifyproConfig = getConfig();
+
+        const stringifySassifyProRc = JSON.stringify(
+          defaultSassifyproConfig,
+          null,
+          2,
+        );
+
+        await writeFile(sassifyproConfigPath, stringifySassifyProRc);
+
+        spinner.success({
+          text: green('sassifyprorc.json created successfully.'),
+        });
       });
-    } catch (defaultSassifyproConfig) {
-      const stringifySassifyProRc = JSON.stringify(
-        defaultSassifyproConfig,
-        null,
-        2,
-      );
-
-      await writeFile(sassifyproConfigPath, stringifySassifyProRc);
-
-      spinner.success({
-        text: green('sassifyprorc.json created successfully.'),
-      });
-    }
   }
 }
 

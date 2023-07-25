@@ -9,6 +9,7 @@ import { createSpinner } from 'nanospinner';
 import { matchFile } from './match-file.js';
 import { readAndUpdateConfig } from '../config/read-and-update-config.js';
 import { SassOptions } from '../@types/sass-options.js';
+import { postCSSProcessor } from './processor.js';
 
 export default class Compiler {
   private static async preCompile(props: SassOptions): Promise<void> {
@@ -34,16 +35,27 @@ export default class Compiler {
       );
 
       const writeCSSFile = () => {
-        const getFile = (url: URL) => {
+        const getFile = async (url: URL) => {
           const fileName = path.basename(url.pathname);
 
           if (!fileName.match(/^_/)) {
             const renameFile = fileName.replace(/.s[ac]ss$/, '.css');
             const joinFilePath = path.join(cssOutputPath, renameFile);
 
-            writeFile(joinFilePath, css);
+            if (sanitizedProps.autoprefixer) {
+              postCSSProcessor(css)
+                .then((processed) => {
+                  writeFile(joinFilePath, processed.css);
+                })
+                .catch((err) => {
+                  throw new Error(err);
+                });
+            } else {
+              writeFile(joinFilePath, css);
+            }
           }
         };
+
         loadedUrls.forEach(getFile);
       };
 
@@ -57,7 +69,7 @@ export default class Compiler {
     }
   }
 
-  public static async compileSass(props: SassOptions) {
+  public static compileSass(props: SassOptions) {
     const {
       sassFilePath, cssOutputPath, style, sourceMap, quietDeps,
     } = props;
@@ -86,28 +98,31 @@ export default class Compiler {
     }
 
     async function callCompiler() {
-      const sourceFileStat = await stat(resolvePath);
-      if (sourceFileStat.isFile()) {
-        compile();
-
-        return;
-      }
-
-      function matchFileCallBack(error: Error, files: string[]) {
-        if (error) {
-          spinner.error({ text: red(error.message) });
-
-          console.log(error);
+      try {
+        const sourceFileStat = await stat(resolvePath);
+        if (sourceFileStat.isFile()) {
+          compile();
 
           return;
         }
 
-        files.forEach((file) => compile(file));
+        const matchFileCallBack = (error: Error, files: string[]) => {
+          if (error) {
+            spinner.error({ text: red(error.message) });
+
+            console.log(error);
+
+            return;
+          }
+
+          files.forEach((file) => compile(file));
+        };
+
+        matchFile(resolvePath, matchFileCallBack);
+      } catch (error) {
+        console.log(error);
       }
-
-      matchFile(resolvePath, matchFileCallBack);
     }
-
     access(resolvePath)
       .finally(callCompiler)
       .catch(() => {

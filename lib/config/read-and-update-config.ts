@@ -19,7 +19,7 @@ export default class ReadConfigFile {
    * @throws {Error} If there is an error reading or parsing the configuration file.
    */
   public static async readAndUpdateConfig(): Promise<SassOptions> {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       const currentWorkingDirectory = process.cwd();
 
       const configPath = path.join(currentWorkingDirectory, 'sassifypro.json');
@@ -39,7 +39,7 @@ export default class ReadConfigFile {
       }
 
       function accessCatchCallBack() {
-        reject(getConfig());
+        resolve(getConfig());
       }
 
       function statCallBack(configStat: Stats) {

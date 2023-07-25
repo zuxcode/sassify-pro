@@ -39,7 +39,14 @@ export default class ImportPath {
  * Shortcut for importing Sass files from custom paths and compiling them.
  */
 export const { importPath } = ImportPath;
-readAndUpdateConfig().then((Opts) => {
-  const { importPaths, baseDir, cssOutputPath } = Opts;
-  if (importPaths.length !== 0) importPath(baseDir, cssOutputPath, ...importPaths);
-});
+
+(async () => {
+  try {
+    const opts = await readAndUpdateConfig();
+    if (opts.importPaths.length === 0) return;
+    const { importPaths, baseDir, cssOutputPath } = opts;
+    importPath(baseDir, cssOutputPath, ...importPaths);
+  } catch (error) {
+    console.log(error);
+  }
+})();

@@ -23,5 +23,6 @@
     "import/no-extraneous-dependencies": "off",
     "no-param-reassign": "off",
     "no-useless-catch": "off"
-  }
+  },
+  "ignorePatterns": ["node_modules", "dist", "docs"]
 }

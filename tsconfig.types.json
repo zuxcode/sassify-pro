@@ -1,9 +1,0 @@
-{
-  "extends": "./tsconfig.json",
-  "compilerOptions": {
-    "module": "es2020",
-    "outDir": "tmp/out/",
-    "declaration": true,
-    "emitDeclarationOnly": true
-  }
-}
