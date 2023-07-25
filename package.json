@@ -33,7 +33,7 @@
     "precommit": "lint-staged",
     "dev": "npm run compile && npx yalc publish",
     "typedoc": "rimraf  ./docs && typedoc",
-    "release": "npm run build && publish.bat",
+    "release": "npm run build && ./publish.cmd",
     "test": "jest"
   },
   "husky": {

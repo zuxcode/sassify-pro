@@ -2,11 +2,11 @@
   "$schema": "https://raw.githubusercontent.com/Codeauthor1/sassify-pro/dev/sassifypro-schema.json",
   "type": "object",
   "properties": {
-    "sourceDir": {
+    "sassFilePath": {
       "type": "string",
       "description": "The path to the source directory."
     },
-    "outputDir": {
+    "cssOutputPath": {
       "type": "string",
       "description": "The path to the output directory."
     },
@@ -61,6 +61,10 @@
     "sourceMapIncludeSources": {
       "type": "boolean",
       "description": "Flag indicating whether to include the original sources in the generated source map."
+    },
+    "baseDir": {
+      "type": "string",
+      "description": "resolved relative to the directory containing the sassifypro.json file."
     }
   }
 }
