@@ -1,7 +1,7 @@
 {
   "author": "codeauthor1 <codeauthor2000@gmail.com> (https://www.twitter.com/codeathor1)",
   "name": "sassify-pro",
-  "version": "1.0.0",
+  "version": "1.0.5",
   "description": "SassifyPro is a powerful Sass compiler designed to revolutionize your web development workflow.",
   "main": "dist/index.mjs",
   "types": "dist/types/index.d.ts",
