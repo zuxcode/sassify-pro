@@ -18,6 +18,11 @@ export default abstract class SassConfig {
     sourceMapIncludeSources: false,
     baseDir: path.basename(process.cwd()),
     verbose: false,
+    grid: true,
+    flexbox: true,
+    ignoreUnknownVersions: true,
+    supports: true,
+    overrideBrowserslist: ['last 4 version'],
   };
 
   /**

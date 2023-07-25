@@ -4,13 +4,16 @@ import {
   SassifyProChokidarOptions,
 } from '../utils/watch.js';
 
+import { SassifyproAutoprefixerOption } from '../module/processor.js';
+
 /**
  * Options for Sass compilation.
  */
 export interface SassOptions
   extends Options<'async'>,
     SassifyProBrowserSyncOptions,
-    SassifyProChokidarOptions {
+    SassifyProChokidarOptions,
+    SassifyproAutoprefixerOption {
   /**
    * Specify the path to the Sass file that should be compiled.
    */

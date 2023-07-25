@@ -42,7 +42,7 @@ export default class Compiler {
             const renameFile = fileName.replace(/.s[ac]ss$/, '.css');
             const joinFilePath = path.join(cssOutputPath, renameFile);
 
-            if (sanitizedProps.autoprefixer) {
+            if (sassOptions.autoprefixer) {
               postCSSProcessor(css)
                 .then((processed) => {
                   writeFile(joinFilePath, processed.css);
