@@ -12,8 +12,52 @@ import { SassOptions } from '../@types/index.js';
 import { postCSSProcessor } from './processor.js';
 
 export default class Compiler {
+  private static async writeCSSFile(
+    css: string,
+    cssOutputPath: string,
+    sassOptions: SassOptions,
+    loadedUrls: URL[],
+  ) {
+    const getFile = async (url: URL) => {
+      const fileName = path.basename(url.pathname);
+
+      if (!fileName.match(/^_/)) {
+        const renameFile = fileName.replace(/.s[ac]ss$/, '.css');
+        const joinFilePath = path.join(cssOutputPath, renameFile);
+
+        if (sassOptions.autoprefixer) {
+          try {
+            const processed = await postCSSProcessor(css);
+            await writeFile(joinFilePath, processed.css);
+          } catch (err) {
+            throw new Error(err);
+          }
+        } else {
+          await writeFile(joinFilePath, css);
+        }
+      }
+    };
+
+    loadedUrls.forEach(getFile);
+  }
+
+  private static async createOutputDir(
+    css: string,
+    cssOutputPath: string,
+    sassOptions: SassOptions,
+    loadedUrls: URL[],
+  ) {
+    try {
+      await mkdir(cssOutputPath, { recursive: true });
+      await Compiler.writeCSSFile(css, cssOutputPath, sassOptions, loadedUrls);
+    } catch (error) {
+      throw new Error(error);
+    }
+  }
+
   private static async preCompile(props: SassOptions): Promise<void> {
     const spinner = createSpinner();
+
     try {
       const sassifyproConfig = await readAndUpdateConfig();
 
@@ -27,107 +71,78 @@ export default class Compiler {
 
       const sassOptions = { ...sassifyproConfig, ...sanitizedProps };
 
-      const { sassFilePath, cssOutputPath } = sassOptions;
+      const { cssOutputPath, sassFilePath } = sassOptions;
 
       const { css, loadedUrls } = await sass.compileAsync(
         sassFilePath,
         sassOptions,
       );
 
-      const writeCSSFile = () => {
-        const getFile = async (url: URL) => {
-          const fileName = path.basename(url.pathname);
-
-          if (!fileName.match(/^_/)) {
-            const renameFile = fileName.replace(/.s[ac]ss$/, '.css');
-            const joinFilePath = path.join(cssOutputPath, renameFile);
-
-            if (sassOptions.autoprefixer) {
-              postCSSProcessor(css)
-                .then((processed) => {
-                  writeFile(joinFilePath, processed.css);
-                })
-                .catch((err) => {
-                  throw new Error(err);
-                });
-            } else {
-              writeFile(joinFilePath, css);
-            }
-          }
-        };
-
-        loadedUrls.forEach(getFile);
-      };
-
-      const createOutputDir = () => {
-        mkdir(cssOutputPath, { recursive: true }).then(writeCSSFile);
-      };
-
-      access(cssOutputPath).then(writeCSSFile).catch(createOutputDir);
+      try {
+        await access(cssOutputPath);
+        await Compiler.writeCSSFile(
+          css,
+          cssOutputPath,
+          sassOptions,
+          loadedUrls,
+        );
+      } catch (error) {
+        await Compiler.createOutputDir(
+          css,
+          cssOutputPath,
+          sassOptions,
+          loadedUrls,
+        );
+      }
     } catch (error) {
       spinner.error({ text: red(error) });
     }
   }
 
-  public static compileSass(props: SassOptions) {
+  public static async compileSass(props: SassOptions) {
     const {
       sassFilePath, cssOutputPath, style, sourceMap, quietDeps,
     } = props;
 
-    const { preCompile } = Compiler;
-
     const spinner = createSpinner();
     const srcPath = sassFilePath ?? '';
 
-    const currentWorkingDirectory = process.cwd();
+    const resolvePath = path.resolve(process.cwd(), srcPath);
 
-    const resolvePath = path.join(currentWorkingDirectory, srcPath);
+    try {
+      const sourceFileStat = await stat(resolvePath);
 
-    function compile(file?: string) {
-      preCompile({
-        sassFilePath: file ?? resolvePath,
-        cssOutputPath,
-        style,
-        sourceMap,
-        quietDeps,
-      }).then(() => {
-        spinner.success({
-          text: green(`File ${file ?? resolvePath} compiled successfully`),
+      if (sourceFileStat.isFile()) {
+        await Compiler.preCompile({
+          sassFilePath: resolvePath,
+          cssOutputPath,
+          style,
+          sourceMap,
+          quietDeps,
         });
-      });
-    }
 
-    async function callCompiler() {
-      try {
-        const sourceFileStat = await stat(resolvePath);
-        if (sourceFileStat.isFile()) {
-          compile();
-
-          return;
-        }
-
-        const matchFileCallBack = (error: Error, files: string[]) => {
-          if (error) {
-            spinner.error({ text: red(error.message) });
-
-            console.log(error);
-
-            return;
-          }
-
-          files.forEach((file) => compile(file));
-        };
-
-        matchFile(resolvePath, matchFileCallBack);
-      } catch (error) {
-        console.log(error);
+        spinner.success({
+          text: green(`File ${resolvePath} compiled successfully`),
+        });
+      } else {
+        const files = await matchFile(resolvePath);
+        files.forEach((file) => {
+          Compiler.preCompile({
+            sassFilePath: file,
+            cssOutputPath,
+            style,
+            sourceMap,
+            quietDeps,
+          }).then(() => {
+            spinner.success({
+              text: green(`File ${file} compiled successfully`),
+            });
+          });
+        });
       }
+    } catch (error) {
+      spinner.error({ text: red(error.message) });
     }
-    access(resolvePath)
-      .finally(callCompiler)
-      .catch(() => {
-        console.log(red(`Error: No such file or directory as ${resolvePath}`));
-      });
   }
 }
 

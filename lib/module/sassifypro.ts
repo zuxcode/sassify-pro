@@ -21,14 +21,13 @@ type Options =
   | '--init'
   | '--help'
   | '-h';
+
 /**
  * Main class for SassifyPro.
  */
+
 export default class SassifyPro {
-  /**
-   * Displays an error message for invalid source path.
-   */
-  private static InvalidSrcPath(): void {
+  private static invalidSrcPath(): void {
     createSpinner().error({
       text: red(
         'Error: The "path" argument must be of type string. Received undefined',
@@ -38,19 +37,15 @@ export default class SassifyPro {
 
   /**
    * Parses command line arguments and performs the corresponding action.
-   * @param flag - The command line flag.
-   * @param index - The index of the flag in the argument list.
-   * @param argv - The array of command line arguments.
+   * @param {string} flag - The command line flag.
+   * @param {string[]} args - The array of command line arguments.
    */
-  private static parseArguments(
-    flag?: Options,
-    index?: number,
-    argv?: string[],
-  ): void {
-    const compileSrc = argv[index + 1];
-    const compileOutput = argv[index + 2];
-    const importPathOutput = argv[argv.length - 1];
-    const importPathSrc = argv.slice(3, argv.length - 1);
+
+  private static parseArguments(flag: Options, args: string[]): void {
+    const compileSrc = args[0];
+    const compileOutput = args[1];
+    const importPathOutput = args[args.length - 1];
+    const importPathSrc = args.slice(3, args.length - 1);
 
     switch (flag) {
       case '--version':
@@ -65,7 +60,6 @@ export default class SassifyPro {
             sassFilePath: compileSrc,
             cssOutputPath: compileOutput,
           });
-
           return;
         }
 
@@ -80,7 +74,7 @@ export default class SassifyPro {
       case 'watch':
       case 'w':
         if (!compileSrc) {
-          SassifyPro.InvalidSrcPath();
+          SassifyPro.invalidSrcPath();
           return;
         }
 
@@ -91,7 +85,7 @@ export default class SassifyPro {
 
       case '--import-path':
         if (importPathSrc.length === 0) {
-          SassifyPro.InvalidSrcPath();
+          SassifyPro.invalidSrcPath();
           return;
         }
 
@@ -137,8 +131,9 @@ export default class SassifyPro {
       message();
     } else {
       const args = process.argv.slice(2);
-
-      args.find(SassifyPro.parseArguments);
+      args.forEach((arg, index) => {
+        SassifyPro.parseArguments(arg as Options, args.slice(index + 1));
+      });
     }
   }
 }
@@ -146,13 +141,8 @@ export default class SassifyPro {
 /**
  * The run method of SassifyPro class.
  */
-
 if (typeof require !== 'undefined' && require.main === module) {
-  const { sassifypro } = SassifyPro;
-
-  if (require.main === module) {
-    sassifypro();
-  }
+  SassifyPro.sassifypro();
 }
 
 export const { sassifypro } = SassifyPro;
