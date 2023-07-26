@@ -5,15 +5,8 @@ import { access, readFile } from 'fs/promises';
 import { readAndUpdateConfig } from '../config/index.js';
 
 export interface SassifyproAutoprefixerOption extends autoprefixer.Options {
-  kind?: 'browserslistrc';
+  browserslist?: autoprefixer.Options;
 }
-
-interface SassifyProBrowserslist {
-  browserslist: autoprefixer.Options;
-  kind?: 'browserslist';
-}
-
-type ProcessorOption = SassifyProBrowserslist | SassifyproAutoprefixerOption;
 
 /**
  * Represents the CSSProcessor class that performs post-processing of CSS using autoprefixer.
@@ -57,10 +50,12 @@ export default class CSSProcessor {
       }
     }
 
-    async function readOptionsFromFile(file: string): Promise<ProcessorOption> {
+    async function readOptionsFromFile(
+      file: string,
+    ): Promise<SassifyproAutoprefixerOption> {
       try {
         const opts = await readFile(file, 'utf-8');
-        const parseOpts: ProcessorOption = JSON.parse(opts);
+        const parseOpts: SassifyproAutoprefixerOption = JSON.parse(opts);
         return parseOpts;
       } catch (error) {
         throw new Error(error);
@@ -70,22 +65,19 @@ export default class CSSProcessor {
     try {
       await access(browserListPath);
       const options = await readOptionsFromFile(browserListPath);
-
-      if (options.kind === 'browserslist') return;
-      processor(options);
+      return processor(options);
     } catch {
       try {
         await access(packageJsonPath);
-        const options = await readOptionsFromFile(packageJsonPath);
-        if (options.kind === 'browserslistrc') return;
-        processor(options.browserslist);
-      } catch {
-        try {
-          const opts = await readAndUpdateConfig();
-          processor(opts);
-        } catch (err) {
-          throw new Error(err);
-        }
+        const packageJsonOptions = await readOptionsFromFile(packageJsonPath);
+
+        const sassifyproBrowserList = await readAndUpdateConfig();
+
+        const options = packageJsonOptions.browserslist ?? sassifyproBrowserList;
+
+        return processor(options);
+      } catch (err) {
+        throw new Error(err);
       }
     }
   }
