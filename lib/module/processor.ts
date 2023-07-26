@@ -4,7 +4,16 @@ import path from 'path';
 import { access, readFile } from 'fs/promises';
 import { readAndUpdateConfig } from '../config/index.js';
 
-export interface SassifyproAutoprefixerOption extends autoprefixer.Options {}
+export interface SassifyproAutoprefixerOption extends autoprefixer.Options {
+  kind?: 'browserslistrc';
+}
+
+interface SassifyProBrowserslist {
+  browserslist: autoprefixer.Options;
+  kind?: 'browserslist';
+}
+
+type ProcessorOption = SassifyProBrowserslist | SassifyproAutoprefixerOption;
 
 /**
  * Represents the CSSProcessor class that performs post-processing of CSS using autoprefixer.
@@ -27,8 +36,16 @@ export default class CSSProcessor {
     outputDir?: string,
   ): Promise<postcss.Result> {
     const currentWorkingDirectory = process.cwd();
+    const browserslistrc = '.browserslistrc';
+    const packageJson = 'package.json';
 
-    async function processor(opts: SassifyproAutoprefixerOption) {
+    const browserListPath = path.resolve(
+      currentWorkingDirectory,
+      browserslistrc,
+    );
+    const packageJsonPath = path.resolve(currentWorkingDirectory, packageJson);
+
+    async function processor(opts: autoprefixer.Options) {
       try {
         const result = await postcss([autoprefixer(opts)]).process(css, {
           from: inputDir,
@@ -40,21 +57,10 @@ export default class CSSProcessor {
       }
     }
 
-    const browserslistrc = '.browserslistrc';
-    const packageJson = 'package.json';
-
-    const browserListPath = path.resolve(
-      currentWorkingDirectory,
-      browserslistrc,
-    );
-    const packageJsonPath = path.resolve(currentWorkingDirectory, packageJson);
-
-    async function readOptionsFromFile(
-      file: string,
-    ): Promise<SassifyproAutoprefixerOption> {
+    async function readOptionsFromFile(file: string): Promise<ProcessorOption> {
       try {
         const opts = await readFile(file, 'utf-8');
-        const parseOpts: SassifyproAutoprefixerOption = JSON.parse(opts);
+        const parseOpts: ProcessorOption = JSON.parse(opts);
         return parseOpts;
       } catch (error) {
         throw new Error(error);
@@ -64,16 +70,19 @@ export default class CSSProcessor {
     try {
       await access(browserListPath);
       const options = await readOptionsFromFile(browserListPath);
-      return processor(options);
+
+      if (options.kind === 'browserslist') return;
+      processor(options);
     } catch {
       try {
         await access(packageJsonPath);
         const options = await readOptionsFromFile(packageJsonPath);
-        return processor(options);
+        if (options.kind === 'browserslistrc') return;
+        processor(options.browserslist);
       } catch {
         try {
           const opts = await readAndUpdateConfig();
-          return processor(opts);
+          processor(opts);
         } catch (err) {
           throw new Error(err);
         }

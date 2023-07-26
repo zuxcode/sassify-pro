@@ -1,10 +1,6 @@
 export { importPath, default as ImportPath } from './import-path.js';
 export { readPackage, default as PackageJson } from './package.js';
-export {
-  checkModuleVersion,
-  getLatestVersion,
-  default as Version,
-} from './version.js';
+export { checkModuleVersion, default as Version } from './version.js';
 export {
   SassifyProBrowserSyncOptions,
   SassifyProChokidarOptions,

@@ -1,6 +1,5 @@
 import semver from 'semver';
 import { red, green } from 'colorette';
-import axios from 'axios';
 
 import { readPackage } from './index.js';
 
@@ -44,44 +43,8 @@ export default class Version {
       console.log(error.message);
     }
   }
-
-  public static async getLatestVersion() {
-    const changelogUrl = 'https://github.com/codeauthor1/sassify-pro/releases';
-
-    try {
-      const { name, version } = await readPackage();
-
-      const response = await axios(`https://registry.npmjs.org/${name}/latest`);
-
-      const latestVersion = response.data.version;
-
-      if (latestVersion && latestVersion !== version) {
-        console.log(
-          `
-          A new version of ${name} (${latestVersion}) is available. You are using version ${version}.
-
-          To update, use one of the following commands:
-
-          With npm:
-          
-          ${green(`npm install ${name}@latest`)}
-
-
-          With yarn:
-
-          ${green(`yarn add ${name}@latest`)}
-
-          Check the changelog for more details: ${changelogUrl}
-          `,
-        );
-      }
-    } catch (error) {
-      console.error('Error fetching the latest version:', error.message);
-    }
-  }
 }
 
-export const { checkModuleVersion, getLatestVersion } = Version;
+export const { checkModuleVersion } = Version;
 
 checkModuleVersion();
-getLatestVersion();

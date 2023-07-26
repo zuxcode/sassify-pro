@@ -30,7 +30,7 @@ export default class Compiler {
             const processed = await postCSSProcessor(css);
             await writeFile(joinFilePath, processed.css);
           } catch (err) {
-            throw new Error(err);
+            throw err;
           }
         } else {
           await writeFile(joinFilePath, css);
@@ -51,7 +51,7 @@ export default class Compiler {
       await mkdir(cssOutputPath, { recursive: true });
       await Compiler.writeCSSFile(css, cssOutputPath, sassOptions, loadedUrls);
     } catch (error) {
-      throw new Error(error);
+      throw error;
     }
   }
 

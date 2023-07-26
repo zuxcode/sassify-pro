@@ -48,7 +48,6 @@
     "*.js": "eslint --cache --fix"
   },
   "dependencies": {
-    "axios": "^1.4.0",
     "browser-sync": "^2.29.3",
     "chokidar": "^3.5.3",
     "colorette": "^2.0.20",
