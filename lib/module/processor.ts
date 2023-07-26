@@ -1,30 +1,84 @@
 import autoprefixer from 'autoprefixer';
 import postcss from 'postcss';
-
-import { readAndUpdateConfig } from '../config/read-and-update-config.js';
+import path from 'path';
+import { access, readFile } from 'fs/promises';
+import { readAndUpdateConfig } from '../config/index.js';
 
 export interface SassifyproAutoprefixerOption extends autoprefixer.Options {}
 
+/**
+ * Represents the CSSProcessor class that performs post-processing of CSS using autoprefixer.
+ */
+
 export default class CSSProcessor {
-  public static postCSSProcessor(
+  /**
+   * Processes the CSS using autoprefixer and returns the result.
+   * @param css - The CSS content to be processed.
+   * @param inputDir - Optional. The input directory for the CSS file.
+   * @param outputDir - Optional. The output directory for the processed CSS file.
+   * @returns A Promise resolving to the postcss.Result object containing the processed CSS.
+   * @throws Will throw an error if there is an issue with processing or accessing the
+   * configuration files.
+   */
+
+  public static async postCSSProcessor(
     css: string,
     inputDir?: string,
     outputDir?: string,
-  ) {
-    return new Promise<postcss.Result>((resolve, reject) => {
-      readAndUpdateConfig()
-        .then((config) => {
-          postcss([autoprefixer(config)])
-            .process(css, { from: inputDir, to: outputDir })
-            .then((result) => {
-              resolve(result);
-            })
-            .catch((error) => reject(error));
-        })
-        .catch((err) => {
-          reject(err);
+  ): Promise<postcss.Result> {
+    const currentWorkingDirectory = process.cwd();
+
+    async function processor(opts: SassifyproAutoprefixerOption) {
+      try {
+        const result = await postcss([autoprefixer(opts)]).process(css, {
+          from: inputDir,
+          to: outputDir,
         });
-    });
+        return result;
+      } catch (error) {
+        throw new Error(error);
+      }
+    }
+
+    const browserslistrc = '.browserslistrc';
+    const packageJson = 'package.json';
+
+    const browserListPath = path.resolve(
+      currentWorkingDirectory,
+      browserslistrc,
+    );
+    const packageJsonPath = path.resolve(currentWorkingDirectory, packageJson);
+
+    async function readOptionsFromFile(
+      file: string,
+    ): Promise<SassifyproAutoprefixerOption> {
+      try {
+        const opts = await readFile(file, 'utf-8');
+        const parseOpts: SassifyproAutoprefixerOption = JSON.parse(opts);
+        return parseOpts;
+      } catch (error) {
+        throw new Error(error);
+      }
+    }
+
+    try {
+      await access(browserListPath);
+      const options = await readOptionsFromFile(browserListPath);
+      return processor(options);
+    } catch {
+      try {
+        await access(packageJsonPath);
+        const options = await readOptionsFromFile(packageJsonPath);
+        return processor(options);
+      } catch {
+        try {
+          const opts = await readAndUpdateConfig();
+          return processor(opts);
+        } catch (err) {
+          throw new Error(err);
+        }
+      }
+    }
   }
 }
 

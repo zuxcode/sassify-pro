@@ -2,7 +2,7 @@ import { fileURLToPath } from 'node:url';
 import path, { dirname } from 'node:path';
 import { readFile } from 'fs/promises';
 
-import { Package } from '../@types/package.js';
+import { Package } from '../@types/index.js';
 
 /**
  * Utility class for reading the package.json file.

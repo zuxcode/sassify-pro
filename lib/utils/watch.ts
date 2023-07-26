@@ -3,7 +3,7 @@ import chokidar, { WatchOptions, FSWatcher } from 'chokidar';
 import { green, red, yellow } from 'colorette';
 import { createSpinner } from 'nanospinner';
 
-import { compileSass } from '../module/compiler.js';
+import { compileSass } from '../module/index.js';
 
 /**
  * Options specific to the Sassify Pro BrowserSync configuration.

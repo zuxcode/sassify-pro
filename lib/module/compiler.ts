@@ -7,8 +7,8 @@ import { green, red } from 'colorette';
 import { createSpinner } from 'nanospinner';
 
 import { matchFile } from './match-file.js';
-import { readAndUpdateConfig } from '../config/read-and-update-config.js';
-import { SassOptions } from '../@types/sass-options.js';
+import { readAndUpdateConfig } from '../config/index.js';
+import { SassOptions } from '../@types/index.js';
 import { postCSSProcessor } from './processor.js';
 
 export default class Compiler {

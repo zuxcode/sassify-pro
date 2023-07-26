@@ -2,9 +2,8 @@ import { createSpinner } from 'nanospinner';
 import { red } from 'colorette';
 
 import { compileSass } from './compiler.js';
-import { watchSass } from '../utils/watch.js';
-import { importPath } from '../utils/import-path.js';
-import { version, message, CreateSassifyproFile } from '../cli/initialize.js';
+import { watchSass, importPath } from '../utils/index.js';
+import { version, message, createSassifyproFile } from '../cli/index.js';
 
 type Options =
   | 'compile'
@@ -100,7 +99,7 @@ export default class SassifyPro {
         break;
 
       case '--init':
-        CreateSassifyproFile();
+        createSassifyproFile();
         break;
 
       case '--source-map':

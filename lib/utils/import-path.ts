@@ -1,7 +1,7 @@
 import path from 'node:path';
-import { compileSass } from '../module/compiler.js';
+import { compileSass } from '../module/index.js';
 
-import { readAndUpdateConfig } from '../config/read-and-update-config.js';
+import { readAndUpdateConfig } from '../config/index.js';
 
 /**
  * Utility class for importing Sass files from custom paths.

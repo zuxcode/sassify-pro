@@ -2,7 +2,7 @@ import semver from 'semver';
 import { red, green } from 'colorette';
 import axios from 'axios';
 
-import { readPackage } from './package.js';
+import { readPackage } from './index.js';
 
 export default class Version {
   public static async checkModuleVersion() {

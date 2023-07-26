@@ -99,9 +99,9 @@ This will add the `src/scss` directory as an import path, allowing you to import
 
 ## Configuration
 
-SassifyPro supports configuration through a `.sassifyprorc` file in JSON format. You can place this file in the root directory of your project to define default options for SassifyPro.
+SassifyPro supports configuration through a `sassifypro.json` file in JSON format. You can place this file in the root directory of your project to define default options for SassifyPro.
 
-Here's an example `.sassifyprorc` file:
+Here's an example `sassifypro.json` file:
 
 ```json
 {

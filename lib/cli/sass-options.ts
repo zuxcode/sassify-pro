@@ -1,5 +1,5 @@
 import path from 'node:path';
-import { SassOptions } from '../@types/sass-options.js';
+import { SassOptions } from '../@types/index.js';
 
 /**
  * Provides configuration management for Sass.

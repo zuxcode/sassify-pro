@@ -3,9 +3,8 @@ import {
 } from 'fs/promises';
 import path from 'node:path';
 
-import { Stats } from 'fs';
-import { getConfig, setConfig } from '../cli/sass-options.js';
-import type { SassOptions } from '../@types/sass-options.js';
+import { getConfig, setConfig } from '../cli/index.js';
+import type { SassOptions } from '../@types/index.js';
 
 /**
  * Utility class for reading the configuration file and updating the Sass configuration.
@@ -19,47 +18,42 @@ export default class ReadConfigFile {
    * @throws {Error} If there is an error reading or parsing the configuration file.
    */
   public static async readAndUpdateConfig(): Promise<SassOptions> {
-    return new Promise((resolve) => {
+    try {
       const currentWorkingDirectory = process.cwd();
-
       const configPath = path.join(currentWorkingDirectory, 'sassifypro.json');
 
-      function readFileCallBack(data: string) {
-        const parsedUserConfigFile: SassOptions = JSON.parse(data);
+      // Check if the file is accessible
+      await access(configPath, constants.R_OK);
 
-        if (!parsedUserConfigFile) {
-          throw new Error('Invalid Json file.');
-        }
+      // Get file stats to check if it is empty
+      const configStat = await stat(configPath);
+      const isValidConfigSize = configStat.size !== 0;
 
-        const updatedConfig = { ...getConfig(), ...parsedUserConfigFile };
-
-        setConfig(updatedConfig);
-
-        resolve(updatedConfig);
+      if (!isValidConfigSize) {
+        // Return the default configuration if the file is empty
+        return getConfig();
       }
 
-      function accessCatchCallBack() {
-        resolve(getConfig());
+      // Read and parse the configuration file
+      const data = await readFile(configPath, 'utf-8');
+      const parsedUserConfigFile: SassOptions = JSON.parse(data);
+
+      if (!parsedUserConfigFile) {
+        throw new Error('Invalid JSON file.');
       }
 
-      function statCallBack(configStat: Stats) {
-        const isValidConfigSize = configStat.size !== 0;
+      // Merge the parsed configuration with the existing one
+      const updatedConfig = { ...getConfig(), ...parsedUserConfigFile };
 
-        if (!isValidConfigSize) {
-          resolve(getConfig());
-        } else {
-          readFile(configPath, 'utf-8').then(readFileCallBack);
-        }
-      }
+      // Update the configuration
+      setConfig(updatedConfig);
 
-      function accessThenCallBack() {
-        stat(configPath).then(statCallBack);
-      }
-
-      access(configPath, constants.R_OK)
-        .then(accessThenCallBack)
-        .catch(accessCatchCallBack);
-    });
+      // Return the updated configuration
+      return updatedConfig;
+    } catch (error) {
+      // Handle errors and re-throw with a more informative message if necessary
+      throw new Error('Error reading or parsing the configuration file.');
+    }
   }
 }
 
